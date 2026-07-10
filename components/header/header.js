@@ -7,6 +7,7 @@
   ];
   var ACTIVE_KEY = '2';
   var TITLE_FADE_MS = 300;
+  var FONT_READY_TIMEOUT_MS = 2000;
 
   var MENU_ICON_SVG =
     '<svg viewBox="0 0 24 24" fill="#FF2B00" xmlns="http://www.w3.org/2000/svg">' +
@@ -18,6 +19,27 @@
       '<path d="M12 4v15"/>' +
       '<path d="M6 13l6 6 6-6"/>' +
     '</svg>';
+
+  // The Antonio Bold woff2 is preloaded in <head>, but preloading only
+  // fetches the file — it doesn't guarantee the font is parsed and ready
+  // by the time this element paints. Keep the title hidden (via the same
+  // "is-fading" opacity:0 state used for the thumbnail crossfade) until
+  // the Font Loading API confirms it's actually usable, so it never
+  // flashes in a fallback font first.
+  function revealTitleOnceFontIsReady(title) {
+    function reveal() {
+      title.classList.remove('is-fading');
+    }
+
+    if (document.fonts && document.fonts.load) {
+      document.fonts.load('700 100px Antonio').catch(function () {}).then(reveal);
+    } else {
+      reveal();
+    }
+
+    // Safety net: never leave the title invisible if font loading stalls.
+    setTimeout(reveal, FONT_READY_TIMEOUT_MS);
+  }
 
   function buildHeader(header) {
     var bgA = document.createElement('div');
@@ -40,8 +62,9 @@
       '</button>';
 
     var title = document.createElement('h1');
-    title.className = 'site-header__title';
+    title.className = 'site-header__title is-fading';
     title.textContent = activeConfig.title;
+    revealTitleOnceFontIsReady(title);
 
     var thumbs = document.createElement('div');
     thumbs.className = 'site-header__thumbs';
