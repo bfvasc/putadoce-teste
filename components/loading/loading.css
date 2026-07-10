@@ -62,9 +62,12 @@ body.loading-active {
   display: block;
 }
 
-.loading-item__img--full {
-  opacity: 0;
-  transition: opacity 0.5s ease;
+/* Image-2-large.png is the same photo as Image-2.png, just on a wider
+   canvas with extra background revealed on the left — the cake itself
+   is right/top-aligned between the two exports at the same scale. That
+   anchor makes object-fit: cover reproduce the square crop exactly. */
+[data-item="1"] .loading-item__img {
+  object-position: 100% 0%;
 }
 
 /* Step 2 — separate into a row (Frame 7:58) */
@@ -123,14 +126,6 @@ body.loading-active {
   height: 100dvh;
   margin: 0;
   border-radius: 0;
-}
-
-.loading-screen.is-fullscreen [data-item="1"] .loading-item__img--thumb {
-  opacity: 0;
-}
-
-.loading-screen.is-fullscreen [data-item="1"] .loading-item__img--full {
-  opacity: 1;
 }
 
 .loading-screen.is-fullscreen [data-item="0"],
