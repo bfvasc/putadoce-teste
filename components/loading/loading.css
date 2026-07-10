@@ -18,13 +18,6 @@ body.loading-active {
   inset: 0;
   z-index: 9999;
   background: #ffffff;
-  opacity: 1;
-  transition: opacity 0.5s ease;
-}
-
-.loading-screen.is-done {
-  opacity: 0;
-  pointer-events: none;
 }
 
 .loading-item {
@@ -132,4 +125,18 @@ body.loading-active {
 .loading-screen.is-fullscreen [data-item="2"],
 .loading-screen.is-fullscreen [data-item="3"] {
   opacity: 0;
+}
+
+/* What the fullscreen loading image becomes once the animation finishes.
+   Sits in normal document flow (not fixed) so page content can be added
+   and scrolled below it; sized to 100vh only as a placeholder until the
+   real header design exists. */
+#siteHeader {
+  display: block;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  background-size: cover;
+  background-position: 100% 0%;
+  background-repeat: no-repeat;
 }
