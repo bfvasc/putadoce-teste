@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Putadoce — Loading Animation</title>
+  <!--
+    Entry loading animation, matching Figma frames 7:45, 7:58, 7:65, 7:72
+    (file kAYJnyqg4kZczqNmndvmeE, "Putadoce | Website").
+
+    Image assets are referenced directly from Figma's temporary asset
+    server (URLs expire ~7 days after generation). Download and self-host
+    them under this component's folder before shipping to production.
+  -->
+  <link rel="stylesheet" href="loading.css" />
+</head>
+<body>
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loading-item" data-item="0">
+      <img
+        class="loading-item__img loading-item__img--thumb"
+        src="https://www.figma.com/api/mcp/asset/abd28683-6fd4-4636-b329-782619602204"
+        alt=""
+      />
+    </div>
+    <div class="loading-item" data-item="1">
+      <img
+        class="loading-item__img loading-item__img--thumb"
+        src="https://www.figma.com/api/mcp/asset/3bac01b3-bf20-4f9a-885a-c9b4a9cafe03"
+        alt=""
+      />
+      <img
+        class="loading-item__img loading-item__img--full"
+        src="https://www.figma.com/api/mcp/asset/6a3e8e7d-a7dc-4ac8-8b99-fcf3b26c6be1"
+        alt=""
+      />
+    </div>
+    <div class="loading-item" data-item="2">
+      <img
+        class="loading-item__img loading-item__img--thumb"
+        src="https://www.figma.com/api/mcp/asset/f47b6448-3b94-413c-8084-57917b207e19"
+        alt=""
+      />
+    </div>
+    <div class="loading-item" data-item="3">
+      <img
+        class="loading-item__img loading-item__img--thumb"
+        src="https://www.figma.com/api/mcp/asset/cdc0db3f-0a0e-4df4-9183-388cf6e36b91"
+        alt=""
+      />
+    </div>
+  </div>
+
+  <button class="loading-replay" id="replayButton" type="button">Replay</button>
+
+  <script src="loading.js"></script>
+</body>
+</html>
