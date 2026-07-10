@@ -2,10 +2,9 @@
    animation finishes — matches Figma frame 7:79 "Homepage-Entrada-1"
    (file kAYJnyqg4kZczqNmndvmeE, "Putadoce | Website").
 
-   Font notes: "Bolota Bold" (logo) and "FF Good Pro Condensed Bold"
-   (title) are commercial fonts not available on a public CDN, so this
-   uses "Baloo 2" and "Anton" as free, visually close fallbacks. Swap
-   in the real fonts when they're available. */
+   Font note: "FF Good Pro Condensed Bold" (title) is a commercial font
+   not available on a public CDN, so this uses "Anton" as a free,
+   visually close fallback. Swap in the real font when it's available. */
 
 #siteHeader {
   position: relative;
@@ -45,29 +44,14 @@
 .site-header__logo {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
   line-height: 1;
   text-decoration: none;
 }
 
-.site-header__logo-word {
-  font-family: 'Bolota', 'Baloo 2', sans-serif;
-  font-weight: 700;
-  font-size: 30.189px;
-  color: #ff2b00;
-  white-space: nowrap;
-}
-
-.site-header__logo-icon {
-  display: inline-flex;
-  width: 21.622px;
-  height: 35.094px;
-  flex-shrink: 0;
-}
-
-.site-header__logo-icon svg {
-  width: 100%;
-  height: 100%;
+.site-header__logo-img {
+  display: block;
+  height: 40px;
+  width: auto;
 }
 
 .site-header__menu-btn {

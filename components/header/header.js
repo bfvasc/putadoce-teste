@@ -7,14 +7,6 @@
   ];
   var ACTIVE_KEY = '2';
 
-  var LOGO_ICON_SVG =
-    '<svg viewBox="0 0 22 36" fill="none" xmlns="http://www.w3.org/2000/svg">' +
-      '<path d="M11 34C11 28 9.5 25 9.5 20" stroke="#FF2B00" stroke-width="3" stroke-linecap="round"/>' +
-      '<circle cx="11" cy="11" r="10.5" fill="#FF2B00"/>' +
-      '<path d="M11 3.2A7.8 7.8 0 1 1 5.2 8.8" stroke="#FFFFFF" stroke-width="1.5" fill="none" stroke-linecap="round"/>' +
-      '<path d="M11 6.4A4.8 4.8 0 1 1 7.7 10.4" stroke="#FFFFFF" stroke-width="1.2" fill="none" stroke-linecap="round"/>' +
-    '</svg>';
-
   var MENU_ICON_SVG =
     '<svg viewBox="0 0 24 24" fill="#FF2B00" xmlns="http://www.w3.org/2000/svg">' +
       '<path d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z"/>' +
@@ -40,9 +32,7 @@
     nav.className = 'site-header__nav';
     nav.innerHTML =
       '<a class="site-header__logo" href="#" aria-label="Putadoce">' +
-        '<span class="site-header__logo-word">PUTA</span>' +
-        '<span class="site-header__logo-icon">' + LOGO_ICON_SVG + '</span>' +
-        '<span class="site-header__logo-word">DOCE</span>' +
+        '<img class="site-header__logo-img" src="components/assets/Logo.svg" alt="Putadoce" />' +
       '</a>' +
       '<button class="site-header__menu-btn" type="button">' +
         '<span>Menu</span>' + MENU_ICON_SVG +
