@@ -82,7 +82,7 @@
   font-weight: 500;
   font-size: 16px;
   line-height: 120%;
-  letter-spacing: -2px;
+  letter-spacing: 0;
   color: #ff2b00;
   transition: color 0.18s ease;
 }
@@ -170,7 +170,7 @@
   font-weight: 500;
   font-size: 16px;
   line-height: 120%;
-  letter-spacing: -2px;
+  letter-spacing: 0;
   color: #ff2b00;
   white-space: nowrap;
   transition: color 0.18s ease;
