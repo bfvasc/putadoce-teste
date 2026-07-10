@@ -4,7 +4,20 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Putadoce</title>
+  <!--
+    Font note: "Bolota Bold" (logo) and "FF Good Pro Condensed Bold"
+    (hero title) are commercial fonts not available on a public CDN —
+    "Baloo 2" and "Anton" below are free, visually close fallbacks.
+    "DM Sans" (nav/UI text) is the real font used in the Figma frame.
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Anton&family=Baloo+2:wght@700&family=DM+Sans:wght@500&display=swap"
+    rel="stylesheet"
+  />
   <link rel="stylesheet" href="components/loading/loading.css" />
+  <link rel="stylesheet" href="components/header/header.css" />
 </head>
 <body>
   <div class="loading-screen" id="loadingScreen">
@@ -39,5 +52,6 @@
   </div>
 
   <script src="components/loading/loading.js"></script>
+  <script src="components/header/header.js"></script>
 </body>
 </html>
