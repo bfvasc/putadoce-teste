@@ -1,11 +1,12 @@
 (function () {
   var THUMB_CONFIG = [
-    { key: '1', thumb: 'components/loading/Image-1.png', large: 'components/loading/Image-1-large.png' },
-    { key: '2', thumb: 'components/loading/Image-2.png', large: 'components/loading/Image-2-large.png' },
-    { key: '3', thumb: 'components/loading/Image-3.png', large: 'components/loading/Image-3-large.png' },
-    { key: '4', thumb: 'components/loading/Image-4.png', large: 'components/loading/Image-4-large.png' }
+    { key: '1', thumb: 'components/loading/Image-1.png', large: 'components/loading/Image-1-large.png', title: 'Nós amamos cores' },
+    { key: '2', thumb: 'components/loading/Image-2.png', large: 'components/loading/Image-2-large.png', title: 'Nós amamos buttercream' },
+    { key: '3', thumb: 'components/loading/Image-3.png', large: 'components/loading/Image-3-large.png', title: 'Nós amamos artistas' },
+    { key: '4', thumb: 'components/loading/Image-4.png', large: 'components/loading/Image-4-large.png', title: 'Nós amamos inovar' }
   ];
   var ACTIVE_KEY = '2';
+  var TITLE_FADE_MS = 300;
 
   var MENU_ICON_SVG =
     '<svg viewBox="0 0 24 24" fill="#FF2B00" xmlns="http://www.w3.org/2000/svg">' +
@@ -40,7 +41,7 @@
 
     var title = document.createElement('h1');
     title.className = 'site-header__title';
-    title.textContent = 'Nós amamos buttercream';
+    title.textContent = activeConfig.title;
 
     var thumbs = document.createElement('div');
     thumbs.className = 'site-header__thumbs';
@@ -85,6 +86,12 @@
       hiddenLayer.classList.add('is-visible');
       visibleLayer.classList.remove('is-visible');
       visibleLayer = hiddenLayer;
+
+      title.classList.add('is-fading');
+      setTimeout(function () {
+        title.textContent = config.title;
+        title.classList.remove('is-fading');
+      }, TITLE_FADE_MS);
 
       thumbs.querySelectorAll('.site-header__thumb').forEach(function (el) {
         el.classList.remove('is-active');

@@ -87,11 +87,13 @@
   transform: translate(-50%, -50%);
   font-family: 'Antonio', sans-serif;
   font-weight: 700;
-  /* Scales with viewport width so "NÓS AMAMOS BUTTERCREAM" always fits
-     on one line (measured against the real Antonio Bold metrics: at
-     100px + this letter-spacing the text is 961px wide, so 8.84vw
-     keeps it at ~85% of viewport width at any size below the 100px
-     cap, which kicks in at a ~1131px viewport). */
+  /* Scales with viewport width so the title always fits on one line
+     (measured against the real Antonio Bold metrics: at 100px + this
+     letter-spacing, "NÓS AMAMOS BUTTERCREAM" — the longest of the four
+     thumbnail titles — is 961px wide, so 8.84vw keeps it at ~85% of
+     viewport width at any size below the 100px cap, which kicks in at
+     a ~1131px viewport). The other three titles are all shorter, so
+     the same formula fits them with extra room to spare. */
   font-size: clamp(24px, 8.84vw, 100px);
   letter-spacing: -2px;
   line-height: 100%;
@@ -99,6 +101,11 @@
   text-align: center;
   text-transform: uppercase;
   white-space: nowrap;
+  transition: opacity 0.3s ease;
+}
+
+.site-header__title.is-fading {
+  opacity: 0;
 }
 
 /* Thumbnails */
