@@ -57,7 +57,7 @@
       '<a class="site-header__logo" href="#" aria-label="Putadoce">' +
         '<img class="site-header__logo-img" src="components/assets/Logo.svg" alt="Putadoce" />' +
       '</a>' +
-      '<button class="site-header__menu-btn" type="button">' +
+      '<button class="btn-pink site-header__menu-btn" type="button">' +
         '<span>Menu</span>' + MENU_ICON_SVG +
       '</button>';
 
@@ -79,7 +79,7 @@
     });
 
     var pill = document.createElement('a');
-    pill.className = 'site-header__pill';
+    pill.className = 'btn-pink site-header__pill';
     pill.href = '#site-content';
     pill.innerHTML = '<span>O site continua mais pra baixo</span>' + ARROW_DOWN_SVG;
 
