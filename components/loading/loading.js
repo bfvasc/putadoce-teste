@@ -7,11 +7,27 @@
     rowHold: 600, // short pause before enlarging
     push: 250, // second image nudges the row apart as it starts growing (Frame 7:65)
     fullscreen: 900, // second image grows to cover everything (Frame 7:72)
-    fullscreenHold: 1000, // hold on the fullscreen image
-    fadeOut: 500 // fade the whole overlay away once loading is complete
+    fullscreenHold: 1000 // hold on the fullscreen image before it becomes the header
   };
 
   document.body.classList.add('loading-active');
+
+  // The fullscreen image stays on the page as the site header instead of
+  // being removed, so content added below it later can scroll normally.
+  function becomeSiteHeader() {
+    screen.querySelectorAll('.loading-item:not([data-item="1"])').forEach(function (item) {
+      item.remove();
+    });
+
+    var finalImage = screen.querySelector('[data-item="1"] .loading-item__img');
+
+    var header = document.createElement('header');
+    header.id = 'siteHeader';
+    header.style.backgroundImage = 'url("' + finalImage.src + '")';
+
+    screen.replaceWith(header);
+    document.body.classList.remove('loading-active');
+  }
 
   function play() {
     var t = TIMING.stackHold;
@@ -31,13 +47,8 @@
 
     t += TIMING.fullscreen + TIMING.fullscreenHold;
     setTimeout(function () {
-      screen.dispatchEvent(new CustomEvent('loading:complete'));
-      screen.classList.add('is-done');
-
-      setTimeout(function () {
-        screen.remove();
-        document.body.classList.remove('loading-active');
-      }, TIMING.fadeOut);
+      document.dispatchEvent(new CustomEvent('loading:complete'));
+      becomeSiteHeader();
     }, t);
   }
 

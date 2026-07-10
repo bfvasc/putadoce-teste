@@ -18,13 +18,6 @@ body.loading-active {
   inset: 0;
   z-index: 9999;
   background: #ffffff;
-  opacity: 1;
-  transition: opacity 0.5s ease;
-}
-
-.loading-screen.is-done {
-  opacity: 0;
-  pointer-events: none;
 }
 
 .loading-item {
@@ -62,9 +55,12 @@ body.loading-active {
   display: block;
 }
 
-.loading-item__img--full {
-  opacity: 0;
-  transition: opacity 0.5s ease;
+/* Image-2-large.png is the same photo as Image-2.png, just on a wider
+   canvas with extra background revealed on the left — the cake itself
+   is right/top-aligned between the two exports at the same scale. That
+   anchor makes object-fit: cover reproduce the square crop exactly. */
+[data-item="1"] .loading-item__img {
+  object-position: 100% 0%;
 }
 
 /* Step 2 — separate into a row (Frame 7:58) */
@@ -125,16 +121,22 @@ body.loading-active {
   border-radius: 0;
 }
 
-.loading-screen.is-fullscreen [data-item="1"] .loading-item__img--thumb {
-  opacity: 0;
-}
-
-.loading-screen.is-fullscreen [data-item="1"] .loading-item__img--full {
-  opacity: 1;
-}
-
 .loading-screen.is-fullscreen [data-item="0"],
 .loading-screen.is-fullscreen [data-item="2"],
 .loading-screen.is-fullscreen [data-item="3"] {
   opacity: 0;
+}
+
+/* What the fullscreen loading image becomes once the animation finishes.
+   Sits in normal document flow (not fixed) so page content can be added
+   and scrolled below it; sized to 100vh only as a placeholder until the
+   real header design exists. */
+#siteHeader {
+  display: block;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  background-size: cover;
+  background-position: 100% 0%;
+  background-repeat: no-repeat;
 }
