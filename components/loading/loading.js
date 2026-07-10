@@ -1,6 +1,5 @@
 (function () {
   var screen = document.getElementById('loadingScreen');
-  var replayButton = document.getElementById('replayButton');
 
   var TIMING = {
     stackHold: 500, // stacked, only the top image visible (Frame 7:45)
@@ -8,55 +7,39 @@
     rowHold: 600, // short pause before enlarging
     push: 250, // second image nudges the row apart as it starts growing (Frame 7:65)
     fullscreen: 900, // second image grows to cover everything (Frame 7:72)
-    fullscreenHold: 1000 // hold on the fullscreen image
+    fullscreenHold: 1000, // hold on the fullscreen image
+    fadeOut: 500 // fade the whole overlay away once loading is complete
   };
 
-  var timers = [];
-
-  function schedule(fn, delay) {
-    timers.push(setTimeout(fn, delay));
-  }
-
-  function clearSchedule() {
-    timers.forEach(clearTimeout);
-    timers.length = 0;
-  }
-
-  function resetInstantly() {
-    screen.classList.add('no-transition');
-    screen.classList.remove('is-row', 'is-push', 'is-fullscreen');
-    // Force reflow so the next transition re-enables cleanly.
-    void screen.offsetWidth;
-    screen.classList.remove('no-transition');
-  }
+  document.body.classList.add('loading-active');
 
   function play() {
-    clearSchedule();
-    resetInstantly();
-
     var t = TIMING.stackHold;
-    schedule(function () {
+    setTimeout(function () {
       screen.classList.add('is-row');
     }, t);
 
     t += TIMING.separate + TIMING.rowHold;
-    schedule(function () {
+    setTimeout(function () {
       screen.classList.add('is-push');
     }, t);
 
     t += TIMING.push;
-    schedule(function () {
+    setTimeout(function () {
       screen.classList.add('is-fullscreen');
     }, t);
 
     t += TIMING.fullscreen + TIMING.fullscreenHold;
-    schedule(function () {
+    setTimeout(function () {
       screen.dispatchEvent(new CustomEvent('loading:complete'));
-      play(); // loop for easy review; drop this call when wiring into the real homepage
+      screen.classList.add('is-done');
+
+      setTimeout(function () {
+        screen.remove();
+        document.body.classList.remove('loading-active');
+      }, TIMING.fadeOut);
     }, t);
   }
-
-  replayButton.addEventListener('click', play);
 
   play();
 })();

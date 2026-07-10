@@ -5,18 +5,26 @@
   box-sizing: border-box;
 }
 
-html,
 body {
   margin: 0;
-  height: 100%;
-  background: #ffffff;
+}
+
+body.loading-active {
   overflow: hidden;
 }
 
 .loading-screen {
   position: fixed;
   inset: 0;
+  z-index: 9999;
   background: #ffffff;
+  opacity: 1;
+  transition: opacity 0.5s ease;
+}
+
+.loading-screen.is-done {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .loading-item {
@@ -129,25 +137,4 @@ body {
 .loading-screen.is-fullscreen [data-item="2"],
 .loading-screen.is-fullscreen [data-item="3"] {
   opacity: 0;
-}
-
-/* Manual replay control, for reviewing the animation on demand */
-.loading-replay {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  z-index: 10;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 360px;
-  background: #ff2b00;
-  color: #ffffff;
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.loading-replay:hover {
-  opacity: 0.9;
 }
