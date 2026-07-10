@@ -1,10 +1,6 @@
 /* Homepage hero content injected into #siteHeader once the loading
    animation finishes — matches Figma frame 7:79 "Homepage-Entrada-1"
-   (file kAYJnyqg4kZczqNmndvmeE, "Putadoce | Website").
-
-   Font note: "FF Good Pro Condensed Bold" (title) is a commercial font
-   not available on a public CDN, so this uses "Anton" as a free,
-   visually close fallback. Swap in the real font when it's available. */
+   (file kAYJnyqg4kZczqNmndvmeE, "Putadoce | Website"). */
 
 #siteHeader {
   position: relative;
@@ -90,10 +86,11 @@
   margin: 0;
   max-width: 90%;
   transform: translate(-50%, -50%);
-  font-family: 'FF Good Pro Condensed', 'Anton', sans-serif;
+  font-family: 'Antonio', sans-serif;
   font-weight: 700;
-  font-size: clamp(32px, 8vw, 120px);
-  line-height: 1.05;
+  font-size: 100px;
+  letter-spacing: -2px;
+  line-height: 100%;
   color: #ffffff;
   text-align: center;
   text-transform: uppercase;
