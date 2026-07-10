@@ -10,12 +10,12 @@
   var FONT_READY_TIMEOUT_MS = 2000;
 
   var MENU_ICON_SVG =
-    '<svg viewBox="0 0 24 24" fill="#FF2B00" xmlns="http://www.w3.org/2000/svg">' +
+    '<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">' +
       '<path d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z"/>' +
     '</svg>';
 
   var ARROW_DOWN_SVG =
-    '<svg viewBox="0 0 24 24" fill="none" stroke="#FF2B00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">' +
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">' +
       '<path d="M12 4v15"/>' +
       '<path d="M6 13l6 6 6-6"/>' +
     '</svg>';

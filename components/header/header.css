@@ -45,7 +45,8 @@
   box-shadow: 0 4px 12px rgba(95, 16, 48, 0.18);
 }
 
-.btn-pink:hover span {
+.btn-pink:hover span,
+.btn-pink:hover svg {
   color: #5f1030;
 }
 
@@ -82,7 +83,7 @@
   font-weight: 500;
   font-size: 16px;
   line-height: 120%;
-  letter-spacing: -2px;
+  letter-spacing: 0;
   color: #ff2b00;
   transition: color 0.18s ease;
 }
@@ -91,6 +92,8 @@
   width: 20px;
   height: 20px;
   flex-shrink: 0;
+  color: #ff2b00;
+  transition: color 0.18s ease;
 }
 
 /* Title */
@@ -170,7 +173,7 @@
   font-weight: 500;
   font-size: 16px;
   line-height: 120%;
-  letter-spacing: -2px;
+  letter-spacing: 0;
   color: #ff2b00;
   white-space: nowrap;
   transition: color 0.18s ease;
@@ -180,6 +183,8 @@
   width: 20px;
   height: 20px;
   flex-shrink: 0;
+  color: #ff2b00;
+  transition: color 0.18s ease;
 }
 
 @media (max-width: 640px) {
