@@ -54,6 +54,37 @@
   letter-spacing: -1px;
   text-decoration: none;
   white-space: nowrap;
+  transition: background-color 0.18s ease;
+}
+
+.about__cta:hover {
+  background-color: #250713;
+}
+
+/* Hidden at rest (matches the resting-state frame, which has no icon)
+   and revealed on hover (matches the hover-state frame, node 30:479),
+   growing in alongside the background-color change instead of the
+   button jumping to a new width. */
+.about__cta-icon {
+  display: inline-flex;
+  width: 0;
+  margin-left: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: width 0.18s ease, margin-left 0.18s ease, opacity 0.18s ease;
+}
+
+.about__cta:hover .about__cta-icon {
+  width: 24px;
+  margin-left: 10px;
+  opacity: 1;
+}
+
+.about__cta-icon svg {
+  display: block;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
 }
 
 @media (max-width: 640px) {

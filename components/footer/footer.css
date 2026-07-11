@@ -56,7 +56,7 @@
   font-family: 'DM Sans', sans-serif;
   font-size: 16px;
   line-height: 1.1;
-  letter-spacing: -0.48px;
+  letter-spacing: -0.01em;
   color: #ff2b00;
 }
 
@@ -106,8 +106,11 @@
 .footer__logo {
   grid-column: 1 / -1;
   justify-self: center;
-  width: 100%;
-  max-width: 1122px;
+  /* Always exactly 55px from the card's left/right edges, at any card
+     width — not capped at the 1122px it happens to measure at the
+     1280px reference frame width, so it keeps scaling up on wider
+     screens instead of staying small relative to the card. */
+  width: calc(100% - 110px);
   height: auto;
   /* Same asset and aspect ratio as the nav logo (components/assets/Logo.svg,
      1736x400), just scaled up ~6.46x to match the frame's 1122x258.57
