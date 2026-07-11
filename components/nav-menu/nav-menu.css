@@ -1,0 +1,121 @@
+/* Mobile/nav menu open state — matches Figma frame 32:518
+   "Homepage-Menu-Aberto" (file kAYJnyqg4kZczqNmndvmeE,
+   "Putadoce | Website").
+
+   The drawer width (min(630px, 90vw)) and nav item font-size
+   (clamp(24px, 24cqw, 100px)) reproduce the frame's 630px drawer /
+   100px text exactly at the 1280px reference width and above
+   (measured: at drawer width 630px the font-size formula already
+   exceeds the 100px cap, so it locks to exactly 100px there), while
+   scaling both down together below that so "Portfolio" — the widest
+   item, measured against the real DM Sans Medium font at 364px wide
+   at 100px/-4px-tracking — always fits within ~90% of the drawer's
+   padded content width instead of overflowing on narrow phones. */
+
+.nav-menu__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.nav-menu__overlay.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.nav-menu__drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 10001;
+  width: min(630px, 90vw);
+  height: 100vh;
+  height: 100dvh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding: 152px 28px 56px 104px;
+  background: #ffffff;
+  overflow: hidden;
+  transform: translateX(100%);
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.nav-menu__drawer.is-open {
+  transform: translateX(0);
+}
+
+.nav-menu__list {
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-menu__item {
+  margin: 0 0 -0.2em;
+  padding: 0;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  font-size: clamp(24px, 24cqw, 100px);
+  line-height: 1.2;
+  /* -0.04em == -4px at the 100px reference size (matches the frame
+     exactly there) but scales proportionally at smaller sizes instead
+     of staying a fixed -4px, which would look far too tight once the
+     font shrinks for mobile. */
+  letter-spacing: -0.04em;
+  color: #000000;
+  text-decoration: none;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.nav-menu__item:last-child {
+  margin-bottom: 0;
+}
+
+.nav-menu__drawer.is-content-visible .nav-menu__item {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.nav-menu__social {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  margin-top: auto;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.nav-menu__drawer.is-content-visible .nav-menu__social {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.nav-menu__social svg {
+  display: block;
+  width: 40px;
+  height: 40px;
+}
+
+body.nav-menu-open {
+  overflow: hidden;
+}
+
+/* The nav bar (logo + Menu/Fechar button) sits in normal flow at
+   z-index: 3 inside #siteHeader, well below the drawer/overlay's
+   10000+ stack — so without this it would be visually and
+   interactively buried under the drawer while open. The Figma frame
+   shows the logo and "Fechar" button staying on top of the drawer, so
+   raise the whole nav above it only while the menu is open. */
+body.nav-menu-open .site-header__nav {
+  z-index: 10002;
+}
