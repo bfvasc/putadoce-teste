@@ -14,7 +14,10 @@
   column-gap: 20px;
   box-sizing: border-box;
   width: 100%;
-  padding: 96px 24px;
+  /* padding-top is doubled (was 96px) to space this section further
+     from #siteHeader above it; padding-bottom is unrelated and stays
+     as it was. */
+  padding: 192px 24px 96px;
 }
 
 .about__content {
@@ -55,7 +58,7 @@
 
 @media (max-width: 640px) {
   .about {
-    padding: 64px 24px;
+    padding: 128px 24px 64px;
   }
 
   .about__content {
