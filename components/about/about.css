@@ -1,0 +1,68 @@
+/* "About" intro section — sits directly below #siteHeader on the
+   homepage. Text-only content + CTA on a 12-column stretch grid
+   (24px outer margin, 20px gutter), with the content spanning the
+   middle 8 of 12 columns (2 empty columns on each side) on desktop.
+
+   Not specified by the design brief, so chosen to match the site's
+   existing conventions: paragraph color (near-black, for a bold
+   headline-scale statement) and the CTA's 12px border-radius (same
+   radius already used by .btn-pink in the header). */
+
+.about {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  column-gap: 20px;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 96px 24px;
+}
+
+.about__content {
+  grid-column: 3 / span 8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.about__text {
+  margin: 0;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  font-size: clamp(28px, 6vw, 48px);
+  line-height: 110%;
+  letter-spacing: -3px;
+  text-align: center;
+  color: #1a1a1a;
+}
+
+.about__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 40px;
+  height: 56px;
+  padding: 0 32px;
+  border-radius: 12px;
+  background-color: #5f1030;
+  color: #ffffff;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  letter-spacing: -1px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .about {
+    padding: 64px 24px;
+  }
+
+  .about__content {
+    grid-column: 1 / -1;
+  }
+
+  .about__cta {
+    width: 100%;
+  }
+}
