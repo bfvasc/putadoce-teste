@@ -1,9 +1,11 @@
 /* FAQ accordion — matches Figma frames 42:55 (closed) / 43:86 (open)
    "Homepage-Sessao-6-FAQ" (file kAYJnyqg4kZczqNmndvmeE, "Putadoce |
-   Website"). Follows the same column-2-to-column-11 content-width
-   convention as the decorations/portfolio headers (24px margins, 20px
-   gutter), expressed as container-query formulas so it scales fluidly
-   instead of being pinned to the 1280px reference frame.
+   Website"). Uses the site's plain repeat(12, 1fr) grid (same
+   technique as .about/.footer__card) rather than the cqw-formula
+   approach from decorations/portfolio, since the question column
+   needs to sit at an exact grid column (6) rather than trail the
+   label by a fixed gap — a real grid gives that alignment precisely,
+   with no cqw rounding.
 
    Each answer's 0<->auto height/opacity reveal uses the CSS grid
    0fr<->1fr row-sizing technique rather than JS-measured heights. The
@@ -14,24 +16,24 @@
    items is separate and always present, matching both frames. */
 
 .faq {
-  container-type: inline-size;
-  --col: calc((100cqw - 268px) / 12);
-  --edge: calc(var(--col) + 44px);
   box-sizing: border-box;
   width: 100%;
-  padding: 160px 0;
+  padding: 160px 24px;
 }
 
 .faq__row {
-  display: flex;
-  align-items: flex-start;
-  gap: 80px;
-  box-sizing: border-box;
-  padding-inline: var(--edge);
+  display: grid;
+  /* minmax(0, 1fr), not plain 1fr — otherwise the nowrap label's
+     content-based minimum width would expand its own column and
+     eat into the others, throwing off the 12-column math the list's
+     grid-column: 6 / 12 placement depends on. */
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: 20px;
+  align-items: start;
 }
 
 .faq__label {
-  flex-shrink: 0;
+  grid-column: 2 / 3;
   margin: 0;
   font-family: 'DM Sans', sans-serif;
   font-weight: 500;
@@ -43,7 +45,7 @@
 }
 
 .faq__list {
-  flex: 1 0 0;
+  grid-column: 6 / 12;
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -81,7 +83,7 @@
   margin: 0;
   font-family: 'DM Sans', sans-serif;
   font-weight: 500;
-  font-size: 40px;
+  font-size: 32px;
   line-height: 1.1;
   letter-spacing: -1.2px;
   color: #000000;
@@ -157,13 +159,13 @@
 
 @media (max-width: 640px) {
   .faq {
-    padding: 96px 0;
+    padding: 96px 24px;
   }
 
   .faq__row {
+    display: flex;
     flex-direction: column;
     gap: 24px;
-    padding-inline: 24px;
   }
 
   .faq__list {
