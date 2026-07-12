@@ -1,0 +1,139 @@
+/* "O que acreditamos" section — matches Figma frame 40:6
+   "Homepage-Sessao-1" (file kAYJnyqg4kZczqNmndvmeE, "Putadoce | Website").
+   Purely static/informational: a centered heading over a row of 5
+   icon badges, no interactions. Icons are hand-built inline SVGs
+   (matching the project's existing icon convention) approximating the
+   frame's Remix Icon set (palette-line, sun-cloudy-line, cake-2-line,
+   user-smile-line, pen-nib-line) rather than the temporary
+   figma.com/api/mcp/asset URLs get_design_context returned, which
+   expire after 7 days. */
+
+.beliefs {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 120px 24px 183px;
+  text-align: center;
+}
+
+.beliefs__heading {
+  margin: 0 0 80px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  font-size: 48px;
+  line-height: 1.1;
+  letter-spacing: -1.44px;
+  color: #000000;
+}
+
+.beliefs__list {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 24px 80px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.beliefs__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.beliefs__icon {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  padding: 3px;
+  border-radius: 360px;
+  overflow: hidden;
+}
+
+.beliefs__icon svg {
+  display: block;
+  width: 40px;
+  height: 40px;
+}
+
+.beliefs__icon--design {
+  background: #fee7f6;
+  color: #ff2b00;
+}
+
+.beliefs__icon--design svg {
+  width: 33.333px;
+  height: 33.333px;
+}
+
+.beliefs__icon--memoria {
+  background: #556afe;
+  color: #ffffff;
+}
+
+.beliefs__icon--sabor {
+  background: #ff2b00;
+  color: #ffffff;
+}
+
+.beliefs__icon--personalidade {
+  background: #fdceed;
+  color: #5f1030;
+}
+
+.beliefs__icon--autoral {
+  background: #cad93d;
+  color: #5f1030;
+}
+
+.beliefs__label {
+  margin: 0;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1;
+  letter-spacing: -0.48px;
+  color: #000000;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .beliefs {
+    padding: 64px 24px 96px;
+  }
+
+  .beliefs__heading {
+    margin-bottom: 48px;
+    font-size: 32px;
+    letter-spacing: -0.96px;
+  }
+
+  .beliefs__list {
+    column-gap: 32px;
+    row-gap: 32px;
+  }
+
+  .beliefs__icon {
+    width: 64px;
+    height: 64px;
+  }
+
+  .beliefs__icon svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  .beliefs__icon--design svg {
+    width: 26.667px;
+    height: 26.667px;
+  }
+
+  .beliefs__label {
+    font-size: 14px;
+  }
+}
