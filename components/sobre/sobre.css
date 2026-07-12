@@ -1,10 +1,17 @@
 /* "Sobre" section — matches Figma frame 42:40 "Homepage-Sessao-5-Sobre"
-   (file kAYJnyqg4kZczqNmndvmeE, "Putadoce | Website"). A single pink
-   card spanning the full grid width minus the site's 24px margins
-   (same full-bleed-card technique as .footer__card), with its heading
-   + button centered via flexbox rather than the frame's fixed
+   (file kAYJnyqg4kZczqNmndvmeE, "Putadoce | Website"). A single card
+   spanning the full grid width minus the site's 24px margins (same
+   full-bleed-card technique as .footer__card), with its heading +
+   button centered via flexbox rather than the frame's fixed
    520px-tall/absolute-positioned values, so it scales naturally with
    however many lines the heading wraps to at any width.
+
+   Background is the uploaded team photo (components/about/sobre-bg.png)
+   instead of the frame's flat pink fill, with a dark overlay (::before)
+   behind the text for contrast — the photo's own pink/white stripes
+   and skin tones are too light for the white text to stay readable
+   without it. Text color itself stays white per spec; only the scrim
+   is new.
 
    Entrance animation: the card scales up from 0 at its own center
    (transform-origin defaults to 50% 50%), then the heading/button
@@ -18,6 +25,7 @@
 }
 
 .sobre__card {
+  position: relative;
   box-sizing: border-box;
   width: 100%;
   display: flex;
@@ -27,7 +35,8 @@
   gap: 40px;
   padding: 159px 24px;
   border-radius: 24px;
-  background: #fee7f6;
+  overflow: hidden;
+  background: #5f1030 url('../about/sobre-bg.png') center / cover no-repeat;
   text-align: center;
   transform: scale(0);
   transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
@@ -37,14 +46,26 @@
   transform: scale(1);
 }
 
+/* Dark scrim between the photo and the text, so white text stays
+   readable against the photo's lighter areas. Positioned (not a flex
+   item) so it doesn't disturb the heading/button centering. */
+.sobre__card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+}
+
 .sobre__heading {
+  position: relative;
+  z-index: 1;
   margin: 0;
   font-family: 'DM Sans', sans-serif;
   font-weight: 500;
   font-size: 48px;
   line-height: 1.1;
   letter-spacing: -1.44px;
-  color: #000000;
+  color: #ffffff;
   opacity: 0;
   transform: translateY(16px);
   transition: opacity 0.4s ease, transform 0.4s ease;
@@ -56,6 +77,8 @@
    blanket transition-delay would make hover feel sluggish forever
    after the entrance animation has long finished. */
 .sobre__cta {
+  position: relative;
+  z-index: 1;
   opacity: 0;
   transform: translateY(16px);
   transition: opacity 0.4s ease 0.68s, transform 0.4s ease 0.68s, background-color 0.18s ease;
