@@ -50,19 +50,31 @@
   color: #5f1030;
 }
 
-/* Nav */
+/* Nav — persistent/fixed across the whole page (not scoped to
+   #siteHeader, which has overflow:hidden and would otherwise clip a
+   fixed-position child), so it stays visible above every section as
+   the user scrolls. Hidden while actively scrolling and revealed
+   again shortly after scrolling stops (see header.js), rather than
+   being permanently on-screen. */
 
 .site-header__nav {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 3;
+  z-index: 999;
   display: flex;
   align-items: center;
   justify-content: space-between;
   height: 72px;
   padding: 0 40px;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.site-header__nav.is-hidden {
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
 }
 
 .site-header__logo {
