@@ -1,6 +1,7 @@
-/* "Nossas portfolio" section — matches Figma frame 41:84
+/* "Nosso portfolio" section — matches Figma frame 41:84
    "Homepage-Sessao-4" (file kAYJnyqg4kZczqNmndvmeE, "Putadoce | Website").
-   Static structure only (no interactions/animations yet).
+   Grid/layout is static; the "Ver Portfolio" button reuses
+   .about__cta for its shared hover behavior (see below).
 
    Follows the same content-width convention as the decorations
    section: header row and grid both span from grid column 2 to
@@ -95,24 +96,13 @@
 .portfolio__item--7 { aspect-ratio: 241 / 260; background: #d9d9d9; }
 .portfolio__item--8 { aspect-ratio: 241 / 320; background: #fee7f6; }
 
+/* Button chrome, hover (darker background + arrow reveal), and
+   transition timing all come from .about__cta (see about.css) — this
+   button shares that class. Only positioning lives here. */
 .portfolio__cta {
   display: flex;
   width: fit-content;
-  align-items: center;
-  justify-content: center;
   margin: 0 auto;
-  height: 56px;
-  padding: 10px 20px;
-  border-radius: 12px;
-  background: #5f1030;
-  color: #ffffff;
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 1.2;
-  letter-spacing: -0.32px;
-  text-decoration: none;
-  white-space: nowrap;
 }
 
 @media (max-width: 640px) {
