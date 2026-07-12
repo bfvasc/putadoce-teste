@@ -5,8 +5,29 @@
   box-sizing: border-box;
 }
 
+/* overscroll-behavior-y stops the elastic bounce/rubber-band scroll
+   chaining at the top (and bottom) of the page — without it,
+   trackpad/touch overscroll at the very top of #siteHeader reveals
+   whatever's behind the document for an instant.
+
+   The dark html background-color is a defensive fallback for that
+   same gap on browsers/versions where overscroll-behavior isn't
+   fully honored (older Safari/iOS): a dark edge reads as a shadow,
+   not a jarring white flash, regardless of which hero photo is
+   active. Only html gets it, not body — several sections (about,
+   faq, sobre's own padding) have no background of their own and rely
+   on the page defaulting to white, so body keeps an explicit white
+   background. html's background only becomes visible in the canvas
+   area outside body's own box, i.e. exactly the overscroll region. */
+html {
+  background-color: #000000;
+  overscroll-behavior-y: none;
+}
+
 body {
   margin: 0;
+  background-color: #ffffff;
+  overscroll-behavior-y: none;
 }
 
 body.loading-active {
