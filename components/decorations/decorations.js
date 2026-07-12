@@ -7,7 +7,6 @@
 
   var prevBtn = section.querySelector('.decorations__arrow--prev');
   var nextBtn = section.querySelector('.decorations__arrow--next');
-  var isDesktop = window.matchMedia('(min-width: 641px)');
 
   function maxScrollLeft() {
     return track.scrollWidth - track.clientWidth;
@@ -96,38 +95,6 @@
     },
     true
   );
-
-  // Scroll-jacking: while the section is roughly centered in the
-  // viewport, wheel input first drives the carousel horizontally.
-  // Once the carousel has reached the start/end in the scroll
-  // direction, the wheel event is left alone so the page resumes its
-  // normal vertical scroll. Desktop-only — on mobile the carousel
-  // already scrolls natively via touch, and hijacking wheel input
-  // there would fight the page's normal touch scroll.
-  function isEngaged() {
-    var rect = section.getBoundingClientRect();
-    var vh = window.innerHeight;
-    return rect.top < vh * 0.6 && rect.bottom > vh * 0.4;
-  }
-
-  function onWheel(event) {
-    if (!isDesktop.matches || !isEngaged()) {
-      return;
-    }
-    var max = maxScrollLeft();
-    var goingForward = event.deltaY > 0;
-    var atStart = track.scrollLeft <= 0;
-    var atEnd = track.scrollLeft >= max - 1;
-
-    if ((goingForward && atEnd) || (!goingForward && atStart)) {
-      return;
-    }
-
-    event.preventDefault();
-    track.scrollLeft += event.deltaY;
-  }
-
-  window.addEventListener('wheel', onWheel, { passive: false });
 
   // Entrance animation: cards slide in from the right once the
   // section first enters view.
