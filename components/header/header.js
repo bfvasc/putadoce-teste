@@ -8,6 +8,34 @@
   var ACTIVE_KEY = '2';
   var TITLE_FADE_MS = 300;
   var FONT_READY_TIMEOUT_MS = 2000;
+  var NAV_REVEAL_DELAY_MS = 350;
+
+  // Hides the fixed nav while the page is actively scrolling (in
+  // either direction) and reveals it again once scrolling has been
+  // idle for NAV_REVEAL_DELAY_MS, regardless of scroll position.
+  function setUpNavScrollBehavior(nav) {
+    var revealTimer = null;
+
+    window.addEventListener(
+      'scroll',
+      function () {
+        // The drawer locks page scroll (body.nav-menu-open sets
+        // overflow:hidden), so this shouldn't fire while it's open —
+        // but skip hiding defensively anyway, since hiding the nav
+        // would hide the "Fechar" button needed to close it.
+        if (document.body.classList.contains('nav-menu-open')) {
+          return;
+        }
+
+        nav.classList.add('is-hidden');
+        clearTimeout(revealTimer);
+        revealTimer = setTimeout(function () {
+          nav.classList.remove('is-hidden');
+        }, NAV_REVEAL_DELAY_MS);
+      },
+      { passive: true }
+    );
+  }
 
   var MENU_ICON_SVG =
     '<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">' +
@@ -85,10 +113,16 @@
 
     header.appendChild(bgA);
     header.appendChild(bgB);
-    header.appendChild(nav);
     header.appendChild(title);
     header.appendChild(thumbs);
     header.appendChild(pill);
+
+    // The nav is fixed/persistent across the whole page, so it lives
+    // as a direct body child rather than inside #siteHeader (which
+    // has overflow:hidden and would clip a fixed-position descendant
+    // once the page scrolls past it).
+    document.body.insertBefore(nav, document.body.firstChild);
+    setUpNavScrollBehavior(nav);
 
     var layers = [bgA, bgB];
     var visibleLayer = bgA;
