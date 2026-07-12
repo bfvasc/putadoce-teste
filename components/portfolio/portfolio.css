@@ -1,0 +1,154 @@
+/* "Nossas portfolio" section — matches Figma frame 41:84
+   "Homepage-Sessao-4" (file kAYJnyqg4kZczqNmndvmeE, "Putadoce | Website").
+   Static structure only (no interactions/animations yet).
+
+   Follows the same content-width convention as the decorations
+   section: header row and grid both span from grid column 2 to
+   column 11 (24px margins, 20px gutter), expressed as container-query
+   formulas so it scales fluidly instead of being pinned to the 1280px
+   reference frame. The 4-column masonry grid (2 stacked photos per
+   column, each column's photos at their own independent heights) is
+   built as 4 flex columns rather than a CSS grid, since each column's
+   row heights are independent of the others in the frame. */
+
+.portfolio {
+  container-type: inline-size;
+  --col: calc((100cqw - 268px) / 12);
+  --edge: calc(var(--col) + 44px);
+  --col-width: calc(var(--col) * 2.5 + 30px);
+  box-sizing: border-box;
+  width: 100%;
+  padding: 160px 0;
+}
+
+.portfolio__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  box-sizing: border-box;
+  padding-inline: var(--edge);
+  margin-bottom: 80px;
+}
+
+.portfolio__label {
+  margin: 0;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 1.1;
+  letter-spacing: -0.72px;
+  color: #000000;
+  white-space: nowrap;
+}
+
+.portfolio__heading {
+  margin: 0;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  font-size: 48px;
+  line-height: 1.1;
+  letter-spacing: -1.44px;
+  color: #000000;
+  text-align: right;
+}
+
+.portfolio__heading p {
+  margin: 0;
+}
+
+.portfolio__grid {
+  display: flex;
+  gap: 20px;
+  box-sizing: border-box;
+  padding-inline: var(--edge);
+  margin-bottom: 80px;
+}
+
+.portfolio__col {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 var(--col-width);
+  width: var(--col-width);
+  gap: 20px;
+}
+
+.portfolio__item {
+  display: block;
+  width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.portfolio__item img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.portfolio__item--1 { aspect-ratio: 241 / 260; background: #556afe; }
+.portfolio__item--2 { aspect-ratio: 241 / 340; background: #fee7f6; }
+.portfolio__item--3 { aspect-ratio: 241 / 300; background: #ff2b00; }
+.portfolio__item--4 { aspect-ratio: 241 / 260; background: #fb9dda; }
+.portfolio__item--5 { aspect-ratio: 241 / 320; background: #fee7f6; }
+.portfolio__item--6 { aspect-ratio: 241 / 280; background: #fb9dda; }
+.portfolio__item--7 { aspect-ratio: 241 / 260; background: #d9d9d9; }
+.portfolio__item--8 { aspect-ratio: 241 / 320; background: #fee7f6; }
+
+.portfolio__cta {
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  height: 56px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  background: #5f1030;
+  color: #ffffff;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.2;
+  letter-spacing: -0.32px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .portfolio {
+    padding: 96px 0;
+  }
+
+  .portfolio__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding-inline: 24px;
+    margin-bottom: 40px;
+  }
+
+  .portfolio__label {
+    font-size: 20px;
+  }
+
+  .portfolio__heading {
+    font-size: 28px;
+    letter-spacing: -0.84px;
+    text-align: left;
+  }
+
+  .portfolio__grid {
+    flex-wrap: wrap;
+    padding-inline: 24px;
+    row-gap: 16px;
+    column-gap: 16px;
+    margin-bottom: 48px;
+  }
+
+  .portfolio__col {
+    flex: 0 0 calc(50% - 8px);
+    width: calc(50% - 8px);
+    gap: 16px;
+  }
+}
