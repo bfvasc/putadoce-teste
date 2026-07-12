@@ -1,0 +1,91 @@
+/* "Sobre" section — matches Figma frame 42:40 "Homepage-Sessao-5-Sobre"
+   (file kAYJnyqg4kZczqNmndvmeE, "Putadoce | Website"). A single pink
+   card spanning the full grid width minus the site's 24px margins
+   (same full-bleed-card technique as .footer__card), with its heading
+   + button centered via flexbox rather than the frame's fixed
+   520px-tall/absolute-positioned values, so it scales naturally with
+   however many lines the heading wraps to at any width.
+
+   Entrance animation: the card scales up from 0 at its own center
+   (transform-origin defaults to 50% 50%), then the heading/button
+   fade+lift in only once that scale transition has finished, via a
+   transition-delay equal to the card's own transition duration. */
+
+.sobre {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 80px 24px;
+}
+
+.sobre__card {
+  box-sizing: border-box;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  padding: 159px 24px;
+  border-radius: 24px;
+  background: #fee7f6;
+  text-align: center;
+  transform: scale(0);
+  transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.sobre.is-visible .sobre__card {
+  transform: scale(1);
+}
+
+.sobre__heading {
+  margin: 0;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  font-size: 48px;
+  line-height: 1.1;
+  letter-spacing: -1.44px;
+  color: #000000;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  transition-delay: 0.6s;
+}
+
+/* Delay only applies to the entrance opacity/transform, not to
+   .about__cta's own background-color hover transition — otherwise a
+   blanket transition-delay would make hover feel sluggish forever
+   after the entrance animation has long finished. */
+.sobre__cta {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.4s ease 0.68s, transform 0.4s ease 0.68s, background-color 0.18s ease;
+}
+
+.sobre.is-visible .sobre__heading,
+.sobre.is-visible .sobre__cta {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width: 640px) {
+  .sobre {
+    padding: 48px 24px;
+  }
+
+  .sobre__card {
+    padding: 64px 24px;
+    gap: 24px;
+  }
+
+  .sobre__heading {
+    font-size: 28px;
+    letter-spacing: -0.84px;
+  }
+
+  /* The frame's 2-line break only matches at the desktop reference
+     width — at mobile sizes the first line re-wraps on its own,
+     leaving an orphaned word, so let it reflow naturally instead. */
+  .sobre__break {
+    display: none;
+  }
+}
