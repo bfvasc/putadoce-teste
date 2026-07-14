@@ -117,27 +117,53 @@
   z-index: 2;
   margin: 0;
   transform: translate(-50%, -50%);
-  font-family: 'Antonio', sans-serif;
-  font-weight: 700;
-  /* Scales with viewport width so the title always fits on one line
-     (measured against the real Antonio Bold metrics: at 100px + this
-     letter-spacing, "NÓS AMAMOS BUTTERCREAM" — the longest of the four
-     thumbnail titles — is 961px wide, so 8.84vw keeps it at ~85% of
-     viewport width at any size below the 100px cap, which kicks in at
-     a ~1131px viewport). The other three titles are all shorter, so
-     the same formula fits them with extra room to spare. */
-  font-size: clamp(24px, 8.84vw, 100px);
-  letter-spacing: -2px;
-  line-height: 100%;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  /* Two lines share this font-size. Measured against the real DM
+     Sans Medium metrics at -0.03em tracking (the same ratio used
+     site-wide for DM Sans headings): "Nós amamos" — the fixed first
+     line — is actually the widest line across every state, at 5.838x
+     the font-size, wider even than "buttercream" (5.656x), the
+     longest of the four variable second lines. 14.56vw keeps that
+     widest line at ~85% of viewport width at any size below the
+     120px cap, which kicks in at a ~824px viewport. */
+  font-size: clamp(24px, 14.56vw, 120px);
+  line-height: 80%;
+  letter-spacing: -0.03em;
   color: #ffffff;
   text-align: center;
-  text-transform: uppercase;
   white-space: nowrap;
   transition: opacity 0.3s ease;
 }
 
-.site-header__title.is-fading {
+/* Initial-load gate: hides the whole title until DM Sans is
+   confirmed loaded (see revealTitleOnceFontIsReady in header.js),
+   avoiding a fallback-font flash on first paint. Separate from the
+   per-word swap animation below, which only ever affects the second
+   line. */
+.site-header__title.is-loading {
   opacity: 0;
+}
+
+.site-header__title-line {
+  display: block;
+}
+
+/* Swap animation for the variable second line: fades out
+   (is-fading), the text is swapped while still hidden, then fading
+   back in with a slight upward slide — the same fade+slide-up
+   pattern used for entrances elsewhere on the site (nav-menu items,
+   the decorations cards, the sobre heading/button). The fixed first
+   line has no such class, so it's untouched by any of this. */
+.site-header__title-line--variable {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.site-header__title-line--variable.is-fading {
+  opacity: 0;
+  transform: translateY(12px);
 }
 
 /* Thumbnails */
