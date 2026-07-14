@@ -118,11 +118,18 @@
     });
   }
 
-  document.addEventListener('loading:complete', function () {
-    // header.js's own 'loading:complete' listener (registered first,
-    // since header.js loads before this script) schedules buildHeader()
-    // via setTimeout(fn, 0). Scheduling ours the same way here queues it
+  if (document.getElementById('loadingScreen')) {
+    // nav.js's own 'loading:complete' listener (registered first, since
+    // nav.js loads before this script) schedules buildNav() via
+    // setTimeout(fn, 0). Scheduling ours the same way here queues it
     // right after, so the Menu button already exists once this runs.
-    setTimeout(buildMenu, 0);
-  });
+    document.addEventListener('loading:complete', function () {
+      setTimeout(buildMenu, 0);
+    });
+  } else {
+    // No loading animation on this page — nav.js already built the
+    // Menu button synchronously before this script ran (script tags
+    // execute in order), so there's nothing to wait for.
+    buildMenu();
+  }
 })();

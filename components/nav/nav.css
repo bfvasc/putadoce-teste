@@ -1,0 +1,93 @@
+/* Persistent site nav — logo + Menu button, fixed across the whole
+   page (not scoped to any single section), hidden while actively
+   scrolling and revealed again shortly after scrolling stops (see
+   nav.js). Shared across every page (originally lived inside the
+   homepage's header.css, split out into its own component so
+   portfolio.html — which has no hero/loading animation — can reuse
+   the exact same nav). */
+
+/* Shared pink button chrome — reused by the nav Menu button and the
+   homepage hero's pill CTA, and available for any future pink
+   button. Lives here (rather than header.css) since the nav needs it
+   and is the more foundational of the two; pages that also load
+   header.css (for the hero) rely on this being loaded first. */
+.btn-pink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 12px;
+  background: #fee7f6;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.btn-pink:hover {
+  background-color: #fb9dda;
+  box-shadow: 0 4px 12px rgba(95, 16, 48, 0.18);
+}
+
+.btn-pink:hover span,
+.btn-pink:hover svg {
+  color: #5f1030;
+}
+
+.site-header__nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 72px;
+  padding: 0 40px;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.site-header__nav.is-hidden {
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.site-header__logo {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.site-header__logo-img {
+  display: block;
+  height: 40px;
+  width: auto;
+}
+
+.site-header__menu-btn span {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 120%;
+  letter-spacing: -0.01em;
+  color: #ff2b00;
+  transition: color 0.18s ease;
+}
+
+.site-header__menu-btn svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: #ff2b00;
+  transition: color 0.18s ease;
+}
+
+@media (max-width: 640px) {
+  .site-header__nav {
+    padding: 0 20px;
+  }
+}

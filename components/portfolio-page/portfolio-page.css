@@ -1,0 +1,15 @@
+/* portfolio.html's main content area. Intentionally empty for now —
+   the portfolio grid will be built here in a follow-up step once the
+   images are ready. padding-top just clears the fixed nav (72px tall)
+   so it doesn't overlap the footer below while this is blank; a
+   min-height keeps the page from collapsing to almost nothing in the
+   meantime. Both are expected to be superseded once real content
+   lands here. */
+
+.portfolio-page {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 40vh;
+  padding-top: 72px;
+}

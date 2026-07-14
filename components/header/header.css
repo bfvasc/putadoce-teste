@@ -1,6 +1,9 @@
 /* Homepage hero content injected into #siteHeader once the loading
    animation finishes — matches Figma frame 7:79 "Homepage-Entrada-1"
-   (file kAYJnyqg4kZczqNmndvmeE, "Putadoce | Website"). */
+   (file kAYJnyqg4kZczqNmndvmeE, "Putadoce | Website"). The persistent
+   nav (logo + Menu button) used to live in this file too; it's now
+   its own component (components/nav/) so pages without this hero
+   (e.g. portfolio.html) can reuse it standalone — see nav.css. */
 
 #siteHeader {
   position: relative;
@@ -20,92 +23,6 @@
 
 .site-header__bg.is-visible {
   opacity: 1;
-}
-
-/* Buttons */
-
-/* Shared pink button chrome — reused by the nav Menu button and the
-   pill CTA, and available for any future pink button. */
-.btn-pink {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  height: 40px;
-  padding: 10px 16px;
-  border: none;
-  border-radius: 12px;
-  background: #fee7f6;
-  text-decoration: none;
-  cursor: pointer;
-  transition: background-color 0.18s ease, box-shadow 0.18s ease;
-}
-
-.btn-pink:hover {
-  background-color: #fb9dda;
-  box-shadow: 0 4px 12px rgba(95, 16, 48, 0.18);
-}
-
-.btn-pink:hover span,
-.btn-pink:hover svg {
-  color: #5f1030;
-}
-
-/* Nav — persistent/fixed across the whole page (not scoped to
-   #siteHeader, which has overflow:hidden and would otherwise clip a
-   fixed-position child), so it stays visible above every section as
-   the user scrolls. Hidden while actively scrolling and revealed
-   again shortly after scrolling stops (see header.js), rather than
-   being permanently on-screen. */
-
-.site-header__nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 999;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 72px;
-  padding: 0 40px;
-  transition: transform 0.25s ease, opacity 0.25s ease;
-}
-
-.site-header__nav.is-hidden {
-  transform: translateY(-100%);
-  opacity: 0;
-  pointer-events: none;
-}
-
-.site-header__logo {
-  display: inline-flex;
-  align-items: center;
-  line-height: 1;
-  text-decoration: none;
-}
-
-.site-header__logo-img {
-  display: block;
-  height: 40px;
-  width: auto;
-}
-
-.site-header__menu-btn span {
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 120%;
-  letter-spacing: -0.01em;
-  color: #ff2b00;
-  transition: color 0.18s ease;
-}
-
-.site-header__menu-btn svg {
-  width: 20px;
-  height: 20px;
-  flex-shrink: 0;
-  color: #ff2b00;
-  transition: color 0.18s ease;
 }
 
 /* Title */
@@ -232,10 +149,6 @@
 }
 
 @media (max-width: 640px) {
-  .site-header__nav {
-    padding: 0 20px;
-  }
-
   .site-header__thumbs {
     gap: 12px;
     bottom: 108px;
