@@ -3,10 +3,14 @@
    (24px outer margin, 20px gutter), with the content spanning the
    middle 8 of 12 columns (2 empty columns on each side) on desktop.
 
-   Not specified by the design brief, so chosen to match the site's
-   existing conventions: paragraph color (near-black, for a bold
-   headline-scale statement) and the CTA's 12px border-radius (same
-   radius already used by .btn-pink in the header). */
+   Paragraph color/tracking matches Figma frame 18:2 (file
+   kAYJnyqg4kZczqNmndvmeE, "Putadoce | Website"): #FF2B00, -0.03em
+   (the same -3% tracking ratio used site-wide for DM Sans headings —
+   the frame's flat -1.44px is exactly that ratio at its 48px
+   reference size, expressed here as em so it stays correct across
+   the fluid clamp() below instead of only matching at one size). The
+   CTA's 12px border-radius wasn't specified by any frame, so it just
+   matches .btn-pink's radius for visual consistency. */
 
 .about {
   display: grid;
@@ -33,9 +37,9 @@
   font-weight: 500;
   font-size: clamp(28px, 6vw, 48px);
   line-height: 110%;
-  letter-spacing: -3px;
+  letter-spacing: -0.03em;
   text-align: center;
-  color: #1a1a1a;
+  color: #ff2b00;
 }
 
 .about__cta {

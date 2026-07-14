@@ -22,34 +22,52 @@
   padding: 160px 0;
 }
 
+/* Stacked (not side-by-side): at the reference width, "Putadoce" at
+   170px is ~688px wide and the paragraph block is ~804px wide — those
+   don't fit next to each other within the ~1024px content area, which
+   is why Frame B (node 54:8) actually positions the heading and the
+   paragraph as two independent blocks ~80px apart vertically (matching
+   the same 80px rhythm used everywhere else on the site), rather than
+   as a single space-between row. align-self on each child reproduces
+   Frame B's left/right alignment without needing a wrapper each. */
 .portfolio__header {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 80px;
   box-sizing: border-box;
   padding-inline: var(--edge);
   margin-bottom: 80px;
 }
 
-.portfolio__label {
+.portfolio__title {
+  align-self: flex-start;
   margin: 0;
   font-family: 'DM Sans', sans-serif;
   font-weight: 500;
-  font-size: 24px;
-  line-height: 1.1;
-  letter-spacing: -0.72px;
-  color: #000000;
-  white-space: nowrap;
+  /* Fluid via the section's own container width (cqw, not vw) so it
+     scales with however wide .portfolio actually is. 13.28cqw puts
+     the font-size at exactly 170px when the container is 1280px wide
+     (matching Frame B's reference), and since "Putadoce" — the wider
+     of the two lines — is a fixed 4.048x the font-size (measured
+     against real DM Sans Medium metrics at the -0.07em tracking
+     below), it stays proportional to the container at ~54% of its
+     width at any size, never overflowing. */
+  font-size: clamp(28px, 13.28cqw, 170px);
+  line-height: 0.8;
+  letter-spacing: -0.07em;
+  color: #ff2b00;
+  text-align: left;
 }
 
 .portfolio__heading {
+  align-self: flex-end;
   margin: 0;
   font-family: 'DM Sans', sans-serif;
   font-weight: 500;
   font-size: 48px;
   line-height: 1.1;
   letter-spacing: -1.44px;
-  color: #000000;
+  color: #ff2b00;
   text-align: right;
 }
 
@@ -111,21 +129,20 @@
   }
 
   .portfolio__header {
-    flex-direction: column;
-    align-items: flex-start;
     gap: 16px;
     padding-inline: 24px;
     margin-bottom: 40px;
   }
 
-  .portfolio__label {
-    font-size: 20px;
+  .portfolio__title,
+  .portfolio__heading {
+    align-self: flex-start;
+    text-align: left;
   }
 
   .portfolio__heading {
     font-size: 28px;
     letter-spacing: -0.84px;
-    text-align: left;
   }
 
   .portfolio__grid {
