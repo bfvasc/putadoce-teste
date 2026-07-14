@@ -7,24 +7,28 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <!--
-    Preload the Antonio Bold woff2 (latin subset covers every character
-    used in the hero titles, including "Ó") so it's fetched immediately
-    instead of waiting on the stylesheet request below to discover it —
-    this is what the H1 in header.js waits on via document.fonts.load()
-    before revealing its text, avoiding a fallback-font flash. Re-check
-    this URL against the "latin" @font-face src in
-    https://fonts.googleapis.com/css2?family=Antonio:wght@700 if Google
-    ever rotates the file hash.
+    Preload the DM Sans Medium (500) woff2 (latin subset covers every
+    character used in the hero titles, including "Ó") so it's fetched
+    immediately instead of waiting on the stylesheet request below to
+    discover it — this is what the H1 in header.js waits on via
+    document.fonts.load() before revealing its text, avoiding a
+    fallback-font flash. Re-check this URL against the "latin"
+    @font-face src (font-weight: 500) in
+    https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600 if
+    Google ever rotates the file hash. The H1 used to be set in
+    Antonio Bold (preloaded the same way) — that font isn't used
+    anywhere else on the site anymore, so its preload/stylesheet
+    request was dropped rather than left unused.
   -->
   <link
     rel="preload"
-    href="https://fonts.gstatic.com/s/antonio/v22/gNMbW3NwSYq_9WD34ngK5F8vR8T0PVyW9itPaWE.woff2"
+    href="https://fonts.gstatic.com/s/dmsans/v17/rP2Yp2ywxg089UriI5-g4vlH9VoD8Cmcqbu0-K6z9mXg.woff2"
     as="font"
     type="font/woff2"
     crossorigin
   />
   <link
-    href="https://fonts.googleapis.com/css2?family=Antonio:wght@700&family=DM+Sans:wght@500;600&display=swap"
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600&display=swap"
     rel="stylesheet"
   />
   <link rel="stylesheet" href="components/loading/loading.css" />
