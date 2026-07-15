@@ -44,9 +44,8 @@
    .beliefs__heading: 13.28cqw puts the font-size at exactly 170px at
    the 1280px reference (matching the frame's 170px/-11.9px), scaling
    with the section's own container width via cqw so it never
-   overflows. "Nossas artes" wraps to "Nossas"/"artes" on its own at
-   that size within the header's available width, same as the other
-   two headings, so no forced <br> is needed. */
+   overflows. "Nossas"/"artes" is forced onto two lines with an
+   explicit <br> per the frame, rather than relying on natural wrap. */
 .decorations__heading {
   margin: 0;
   font-family: 'DM Sans', sans-serif;
@@ -65,16 +64,17 @@
   flex-shrink: 0;
 }
 
-/* Sized well above the icon files' own 120x120 artboard's tight
-   glyph (the chevron only fills ~32% of that box's width), so the
-   visible arrow reads at roughly the same weight as in the frame
-   instead of shrinking to near-invisible at a plain 24px box. */
+/* Matches the frame's 120x120 icon box exactly, scaled fluidly via
+   the section's own cqw (same technique as the fluid headings above)
+   instead of a fixed px + media-query jump, so it shrinks smoothly
+   on narrower screens rather than looking oversized on mobile.
+   9.375cqw puts it at exactly 120px at the 1280px reference. */
 .decorations__arrow {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 64px;
-  height: 64px;
+  width: clamp(40px, 9.375cqw, 120px);
+  height: clamp(40px, 9.375cqw, 120px);
   padding: 0;
   border: none;
   background: none;
@@ -160,26 +160,20 @@
 .decorations__card--ourico .decorations__photo { background-color: #fe4646; }
 .decorations__card--floral .decorations__photo { background-color: #857dec; }
 
+/* Bottom-anchored (not centered) on every card, so all 4 products
+   sit on the same visual baseline across the row instead of floating
+   at whatever height each photo's own framing happened to leave them
+   — the previous per-card object-position values (including a
+   classico-specific override) put each product at a different
+   height within its card. */
 .decorations__photo img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
+  object-position: center bottom;
   pointer-events: none;
   transition: transform 0.35s ease;
-}
-
-/* The frame crops this photo well off-center (scaled to 145.5% of
-   the card height, shifted up 37.83%) rather than a plain centered
-   cover — biasing object-position down (~83%) reproduces that same
-   top-heavy crop instead of centering it. The other three cards'
-   frame data is a plain centered cover (goma) or already reads as
-   inset because the photos themselves are shot on a backdrop
-   matching their card color (ouriço, floral), so they need no
-   equivalent override. */
-.decorations__card--classico .decorations__photo img {
-  object-position: 50% 83%;
 }
 
 .decorations__card:hover .decorations__photo img {
@@ -278,11 +272,6 @@
 
   .decorations__header {
     margin-bottom: 40px;
-  }
-
-  .decorations__arrow {
-    width: 40px;
-    height: 40px;
   }
 
   .decorations__card {
