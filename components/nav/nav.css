@@ -45,7 +45,7 @@
   align-items: center;
   justify-content: space-between;
   height: 72px;
-  padding: 0 40px;
+  padding: 0 20px;
   transition: transform 0.25s ease, opacity 0.25s ease;
 }
 
