@@ -33,7 +33,7 @@
 
 .decorations__header {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   box-sizing: border-box;
   padding-inline: var(--edge);
