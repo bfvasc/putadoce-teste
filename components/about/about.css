@@ -50,7 +50,7 @@
   height: 56px;
   padding: 0 32px;
   border-radius: 12px;
-  background-color: #5f1030;
+  background-color: #ff2b00;
   color: #ffffff;
   font-family: 'DM Sans', sans-serif;
   font-weight: 500;
@@ -62,7 +62,7 @@
 }
 
 .about__cta:hover {
-  background-color: #250713;
+  background-color: #5f1030;
 }
 
 /* Hidden at rest (matches the resting-state frame, which has no icon)
