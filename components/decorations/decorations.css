@@ -1,9 +1,16 @@
 /* "Nossas decorações" carousel — originally matched Figma frame
-   34:587, now updated to frame 55:591 "Homepage-Sessao-2" (file
-   kAYJnyqg4kZczqNmndvmeE, "Putadoce | Website"): the small
-   "Nossas decorações:" label is replaced by a large "Nossas artes"
-   display heading, arrows/text recolored, carousel mechanics
-   unchanged.
+   34:587, now updated to frame 55:648 "Homepage-Sessao-2" (file
+   kAYJnyqg4kZczqNmndvmeE, "Putadoce | Website" — the frame's node id
+   has changed a couple of times as the file's been edited; re-find it
+   by name via get_metadata on the page root if 55:648 ever 404s
+   again). The small "Nossas decorações:" label is replaced by a
+   large "Nossas artes" display heading, arrows/text recolored,
+   carousel mechanics unchanged. All 4 cards sit in a single row at
+   the same height (no more staggered/zigzag layout — the frame
+   dropped that), with a 100px gap between the heading and the card
+   row, and each photo cropped to the frame's own exact rectangle
+   (see .decorations__photo img below) rather than one rule applied
+   uniformly across all 4.
 
    Follows the site's 12-column grid convention (24px outer margin,
    20px gutter). container-type: inline-size is set on the section
@@ -37,7 +44,7 @@
   justify-content: space-between;
   box-sizing: border-box;
   padding-inline: var(--edge);
-  margin-bottom: 80px;
+  margin-bottom: 100px;
 }
 
 /* Same fluid display-heading treatment as .portfolio__title and
@@ -129,14 +136,6 @@
   transition: opacity 0.6s ease, transform 0.6s ease;
 }
 
-.decorations__card:nth-child(2) {
-  margin-top: 80px;
-}
-
-.decorations__card:nth-child(4) {
-  margin-top: 80px;
-}
-
 .decorations.is-visible .decorations__card {
   opacity: 1;
   transform: translateX(0);
@@ -160,20 +159,49 @@
 .decorations__card--ourico .decorations__photo { background-color: #fe4646; }
 .decorations__card--floral .decorations__photo { background-color: #857dec; }
 
-/* Bottom-anchored (not centered) on every card, so all 4 products
-   sit on the same visual baseline across the row instead of floating
-   at whatever height each photo's own framing happened to leave them
-   — the previous per-card object-position values (including a
-   classico-specific override) put each product at a different
-   height within its card. */
+/* Each card's photo uses the frame's own exact crop rectangle
+   (percentages of the 293x358 photo box) rather than a single
+   object-position rule applied uniformly — the frame doesn't treat
+   these 4 photos the same way: classico and goma are full-bleed
+   (goma a plain cover, classico a 145.5%-scaled/-37.83%-shifted
+   overscan), while ourico and floral are inset "floating" product
+   shots with the card's own background color showing around them.
+   Matching each one exactly is what makes every card's product read
+   at the frame's intended position instead of an approximated one. */
 .decorations__photo img {
   display: block;
-  width: 100%;
-  height: 100%;
+  position: absolute;
   object-fit: cover;
-  object-position: center bottom;
   pointer-events: none;
   transition: transform 0.35s ease;
+}
+
+.decorations__card--classico .decorations__photo img {
+  left: 0;
+  top: -37.83%;
+  width: 100%;
+  height: 145.5%;
+}
+
+.decorations__card--goma .decorations__photo img {
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.decorations__card--ourico .decorations__photo img {
+  left: 7.47%;
+  top: 19.55%;
+  width: 85.24%;
+  height: 69.76%;
+}
+
+.decorations__card--floral .decorations__photo img {
+  left: 5.12%;
+  top: 23.74%;
+  width: 89.76%;
+  height: 73.46%;
 }
 
 .decorations__card:hover .decorations__photo img {
@@ -277,11 +305,6 @@
   .decorations__card {
     width: 78vw;
     max-width: 320px;
-  }
-
-  .decorations__card:nth-child(2),
-  .decorations__card:nth-child(4) {
-    margin-top: 0;
   }
 
   .decorations__title {
