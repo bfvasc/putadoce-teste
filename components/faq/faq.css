@@ -1,4 +1,4 @@
-/* FAQ accordion — matches Figma frames 42:55 (closed) / 43:86 (open)
+/* FAQ accordion — matches Figma frames 55:727 (closed) / 43:86 (open)
    "Homepage-Sessao-6-FAQ" (file kAYJnyqg4kZczqNmndvmeE, "Putadoce |
    Website"). Uses the site's plain repeat(12, 1fr) grid (same
    technique as .about/.footer__card) rather than the cqw-formula
@@ -13,7 +13,13 @@
    padding-top on the answer text) rather than as a flex `gap` on the
    item, so it collapses away to nothing when closed instead of
    leaving a stray gap under the question — the 80px gap *between*
-   items is separate and always present, matching both frames. */
+   items is separate and always present, matching both frames.
+
+   All FAQ text (label, question, answer) and the +/- icon are
+   #FF2B00, and each item gets a 1px top border in the same color
+   plus 24px of padding above/below its own content (border-top +
+   py-24 on the item's own box in both frames), matching the frames'
+   spacing exactly instead of the previous zero-padding layout. */
 
 .faq {
   box-sizing: border-box;
@@ -40,7 +46,7 @@
   font-size: 24px;
   line-height: 1.1;
   letter-spacing: -0.72px;
-  color: #000000;
+  color: #ff2b00;
   white-space: nowrap;
 }
 
@@ -55,6 +61,8 @@
 .faq__item {
   display: flex;
   flex-direction: column;
+  padding: 24px 0;
+  border-top: 1px solid #ff2b00;
 }
 
 .faq__question {
@@ -86,7 +94,7 @@
   font-size: 32px;
   line-height: 1.1;
   letter-spacing: -1.2px;
-  color: #000000;
+  color: #ff2b00;
 }
 
 /* Animated +/- icon: a fixed horizontal bar plus a vertical bar that
@@ -105,7 +113,7 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  background: #000000;
+  background: #ff2b00;
   transform: translate(-50%, -50%);
   transition: transform 0.3s ease;
 }
@@ -143,7 +151,7 @@
   font-size: 16px;
   line-height: 1.1;
   letter-spacing: -0.48px;
-  color: #000000;
+  color: #ff2b00;
   opacity: 0;
   transition: opacity 0.25s ease;
 }
