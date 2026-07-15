@@ -1,45 +1,37 @@
-/* Mobile/nav menu open state — matches Figma frame 32:518
+/* Mobile/nav menu open state — matches Figma frame 55:218
    "Homepage-Menu-Aberto" (file kAYJnyqg4kZczqNmndvmeE,
-   "Putadoce | Website").
+   "Putadoce | Website"): a fullscreen solid #FF2B00 panel, replacing
+   the previous white 630px side drawer.
 
-   The drawer width (min(630px, 90vw)) and nav item font-size
-   (clamp(24px, 24cqw, 88px)) reproduce the frame's 630px drawer /
-   88px text at the 1280px reference width and above (the formula
-   already exceeds the 88px cap there, so it locks to exactly 88px),
-   while scaling both down together below that so "Portfolio" — the
-   widest item — always fits within the drawer's padded content width
-   instead of overflowing on narrow phones. */
+   The real nav (#siteHeader .site-header__nav, containing the logo
+   and Menu/Fechar button) stays exactly where it is and is raised
+   above this panel via z-index (see body.nav-menu-open
+   .site-header__nav below) rather than being rebuilt inside it — the
+   frame's own logo/Fechar row is just that same nav, shown here on
+   its red background.
 
-.nav-menu__overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 10000;
-  background: rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-}
-
-.nav-menu__overlay.is-visible {
-  opacity: 1;
-  pointer-events: auto;
-}
+   No separate blur/dim overlay behind the panel this time: the old
+   drawer only covered part of the screen, so a backdrop-blur overlay
+   was needed to visually separate it from the page content still
+   visible behind/beside it. This panel is fullscreen and fully
+   opaque, so there's nothing left to blur — the panel's own slide-in
+   transition (the same transform/easing/duration as before) carries
+   the "conceptually the same" entrance forward instead, and the item
+   list's sequential stagger reveal (is-content-visible below) is
+   unchanged from before. */
 
 .nav-menu__drawer {
   position: fixed;
-  top: 0;
-  right: 0;
+  inset: 0;
   z-index: 10001;
-  width: min(630px, 90vw);
+  width: 100%;
   height: 100vh;
   height: 100dvh;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  padding: 136px 28px 56px 104px;
-  background: #ffffff;
+  padding: 160px 24px 64px;
+  background: #ff2b00;
   overflow: hidden;
   transform: translateX(100%);
   transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
@@ -50,33 +42,68 @@
 }
 
 .nav-menu__list {
-  container-type: inline-size;
   display: flex;
   flex-direction: column;
 }
 
+/* Each item gets a top border and top/bottom padding (matching the
+   frame's border-t + py-20 on every item row) instead of the old
+   negative-margin line stacking, which was only needed for the
+   previous borderless design.
+
+   Font-size: the widest item ("Portfolio") measured against real DM
+   Sans Medium metrics at -0.03em tracking (the same -3% ratio used
+   site-wide, matching the frame's -2.4px at 80px) is 3.724x the
+   font-size. 18vw keeps that plus the 40px hover-arrow comfortably
+   inside the panel's 24px side margins at any width down to ~320px,
+   capping at the frame's 80px around a ~444px viewport — a
+   fullscreen panel has far more room than the old 630px drawer did,
+   so the cap kicks in much earlier. */
 .nav-menu__item {
-  margin: 0 0 -0.2em;
-  padding: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin: 0;
+  padding: 20px 0;
+  border-top: 1px solid #ffffff;
   font-family: 'DM Sans', sans-serif;
   font-weight: 500;
-  font-size: clamp(24px, 24cqw, 88px);
-  line-height: 1.2;
-  letter-spacing: -2px;
-  color: #000000;
+  font-size: clamp(32px, 18vw, 80px);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: #ffffff;
   text-decoration: none;
   opacity: 0;
   transform: translateY(16px);
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.nav-menu__item:last-child {
-  margin-bottom: 0;
-}
-
 .nav-menu__drawer.is-content-visible .nav-menu__item {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* Hidden until hovered, matching the frame (only the one item
+   captured mid-hover shows it there) — top-aligned via the parent's
+   align-items: flex-start above, rather than centered against the
+   item's full line height. */
+.nav-menu__item-icon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.nav-menu__item:hover .nav-menu__item-icon {
+  opacity: 1;
+}
+
+.nav-menu__item-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .nav-menu__social {
@@ -94,6 +121,11 @@
   transform: translateY(0);
 }
 
+.nav-menu__social a {
+  display: block;
+  color: #ffffff;
+}
+
 .nav-menu__social svg {
   display: block;
   width: 40px;
@@ -105,11 +137,30 @@ body.nav-menu-open {
 }
 
 /* The nav bar (logo + Menu/Fechar button) sits in normal flow at
-   z-index: 3 inside #siteHeader, well below the drawer/overlay's
-   10000+ stack — so without this it would be visually and
-   interactively buried under the drawer while open. The Figma frame
-   shows the logo and "Fechar" button staying on top of the drawer, so
-   raise the whole nav above it only while the menu is open. */
+   z-index: 3 inside #siteHeader, well below the drawer's 10001+
+   stack — so without this it would be visually and interactively
+   buried under the drawer while open. The frame shows the logo and
+   "Fechar" button staying on top of the drawer, so raise the whole
+   nav above it only while the menu is open. */
 body.nav-menu-open .site-header__nav {
   z-index: 10002;
+}
+
+/* Logo swaps to white while the menu is open, matching the frame —
+   the logo file itself is a solid #FF2B00 mark with no separate
+   color variant, so brightness(0) invert(1) flips it to solid white
+   without needing a second asset. */
+body.nav-menu-open .site-header__logo-img {
+  filter: brightness(0) invert(1);
+  transition: filter 0.3s ease;
+}
+
+@media (max-width: 640px) {
+  .nav-menu__drawer {
+    padding: 120px 24px 40px;
+  }
+
+  .nav-menu__item {
+    gap: 16px;
+  }
 }
