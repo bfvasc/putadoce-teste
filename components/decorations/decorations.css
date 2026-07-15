@@ -1,5 +1,9 @@
-/* "Nossas decorações" carousel — matches Figma frame 34:587
-   "Homepage-Sessao-2" (file kAYJnyqg4kZczqNmndvmeE, "Putadoce | Website").
+/* "Nossas decorações" carousel — originally matched Figma frame
+   34:587, now updated to frame 55:591 "Homepage-Sessao-2" (file
+   kAYJnyqg4kZczqNmndvmeE, "Putadoce | Website"): the small
+   "Nossas decorações:" label is replaced by a large "Nossas artes"
+   display heading, arrows/text recolored, carousel mechanics
+   unchanged.
 
    Follows the site's 12-column grid convention (24px outer margin,
    20px gutter). container-type: inline-size is set on the section
@@ -36,42 +40,52 @@
   margin-bottom: 80px;
 }
 
-.decorations__label {
+/* Same fluid display-heading treatment as .portfolio__title and
+   .beliefs__heading: 13.28cqw puts the font-size at exactly 170px at
+   the 1280px reference (matching the frame's 170px/-11.9px), scaling
+   with the section's own container width via cqw so it never
+   overflows. "Nossas artes" wraps to "Nossas"/"artes" on its own at
+   that size within the header's available width, same as the other
+   two headings, so no forced <br> is needed. */
+.decorations__heading {
   margin: 0;
   font-family: 'DM Sans', sans-serif;
   font-weight: 500;
-  font-size: 24px;
-  line-height: 1.1;
-  letter-spacing: -0.72px;
-  color: #000000;
+  font-size: clamp(28px, 13.28cqw, 170px);
+  line-height: 0.8;
+  letter-spacing: -0.07em;
+  color: #ff2b00;
+  text-align: left;
 }
 
 .decorations__nav {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  width: 70px;
+  gap: 16px;
   flex-shrink: 0;
 }
 
+/* Sized well above the icon files' own 120x120 artboard's tight
+   glyph (the chevron only fills ~32% of that box's width), so the
+   visible arrow reads at roughly the same weight as in the frame
+   instead of shrinking to near-invisible at a plain 24px box. */
 .decorations__arrow {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 64px;
+  height: 64px;
   padding: 0;
   border: none;
   background: none;
-  color: #000000;
   cursor: pointer;
   transition: opacity 0.18s ease;
 }
 
-.decorations__arrow svg {
+.decorations__arrow img {
   display: block;
-  width: 24px;
-  height: 24px;
+  width: 100%;
+  height: 100%;
 }
 
 .decorations__arrow:hover {
@@ -151,8 +165,21 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
   pointer-events: none;
   transition: transform 0.35s ease;
+}
+
+/* The frame crops this photo well off-center (scaled to 145.5% of
+   the card height, shifted up 37.83%) rather than a plain centered
+   cover — biasing object-position down (~83%) reproduces that same
+   top-heavy crop instead of centering it. The other three cards'
+   frame data is a plain centered cover (goma) or already reads as
+   inset because the photos themselves are shot on a backdrop
+   matching their card color (ouriço, floral), so they need no
+   equivalent override. */
+.decorations__card--classico .decorations__photo img {
+  object-position: 50% 83%;
 }
 
 .decorations__card:hover .decorations__photo img {
@@ -206,7 +233,7 @@
   font-size: 40px;
   line-height: 1;
   letter-spacing: -1.2px;
-  color: #000000;
+  color: #ff2b00;
 }
 
 .decorations__cta {
@@ -217,7 +244,7 @@
   font-weight: 500;
   font-size: 16px;
   letter-spacing: -0.48px;
-  color: #000000;
+  color: #ff2b00;
   text-decoration: none;
   width: fit-content;
 }
@@ -251,6 +278,11 @@
 
   .decorations__header {
     margin-bottom: 40px;
+  }
+
+  .decorations__arrow {
+    width: 40px;
+    height: 40px;
   }
 
   .decorations__card {
