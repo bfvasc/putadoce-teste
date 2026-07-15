@@ -7,13 +7,19 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <!--
-    Preload the DM Sans Medium (500) woff2 (latin subset covers every
-    character used in the hero titles, including "Ó") so it's fetched
-    immediately instead of waiting on the stylesheet request below to
-    discover it — this is what the H1 in header.js waits on via
+    Preload the DM Sans woff2 (latin subset covers every character
+    used in the hero title, including "Ó") so it's fetched immediately
+    instead of waiting on the stylesheet request below to discover it
+    — this is what the H1 in header.js waits on via
     document.fonts.load() before revealing its text, avoiding a
-    fallback-font flash. Re-check this URL against the "latin"
-    @font-face src (font-weight: 500) in
+    fallback-font flash. This is a variable-font file: Google serves
+    the exact same URL for both the "font-weight: 500" and
+    "font-weight: 600" @font-face blocks in the stylesheet below (the
+    weight is picked at render time via the font's own wght axis), so
+    this one preload covers the H1's 600/SemiBold as well as any
+    500/Medium text elsewhere (nav, footer, etc.) — no separate
+    preload per weight needed. Re-check this URL against the "latin"
+    @font-face src in
     https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600 if
     Google ever rotates the file hash. The H1 used to be set in
     Antonio Bold (preloaded the same way) — that font isn't used

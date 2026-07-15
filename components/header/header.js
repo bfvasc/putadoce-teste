@@ -7,7 +7,6 @@
     { key: '4', thumb: 'components/loading/Image-4.png', large: 'components/loading/Image-4-large.png', word: 'inovar' }
   ];
   var ACTIVE_KEY = '2';
-  var TITLE_FADE_MS = 300;
   var FONT_READY_TIMEOUT_MS = 2000;
 
   var ARROW_DOWN_SVG =
@@ -16,19 +15,20 @@
       '<path d="M6 13l6 6 6-6"/>' +
     '</svg>';
 
-  // The DM Sans Medium woff2 is preloaded in <head>, but preloading
-  // only fetches the file — it doesn't guarantee the font is parsed
-  // and ready by the time this element paints. Keep the title hidden
-  // (via "is-loading", opacity:0) until the Font Loading API confirms
-  // it's actually usable, so it never flashes in a fallback font
-  // first.
+  // The DM Sans variable-font woff2 is preloaded in <head> (it serves
+  // every weight, including this title's 600/SemiBold, from the same
+  // file), but preloading only fetches the file — it doesn't
+  // guarantee the font is parsed and ready by the time this element
+  // paints. Keep the title hidden (via "is-loading", opacity:0) until
+  // the Font Loading API confirms the specific weight/size used here
+  // is actually usable, so it never flashes in a fallback font first.
   function revealTitleOnceFontIsReady(title) {
     function reveal() {
       title.classList.remove('is-loading');
     }
 
     if (document.fonts && document.fonts.load) {
-      document.fonts.load('500 120px "DM Sans"').catch(function () {}).then(reveal);
+      document.fonts.load('600 100px "DM Sans"').catch(function () {}).then(reveal);
     } else {
       reveal();
     }
@@ -49,10 +49,8 @@
 
     var title = document.createElement('h1');
     title.className = 'site-header__title is-loading';
-    title.innerHTML =
-      '<span class="site-header__title-line">' + TITLE_LINE_1 + '</span>' +
-      '<span class="site-header__title-line site-header__title-line--variable">' + activeConfig.word + '</span>';
-    var titleWord = title.querySelector('.site-header__title-line--variable');
+    title.innerHTML = TITLE_LINE_1 + ' <span class="site-header__title-word">' + activeConfig.word + '</span>';
+    var titleWord = title.querySelector('.site-header__title-word');
     revealTitleOnceFontIsReady(title);
 
     var thumbs = document.createElement('div');
@@ -98,11 +96,9 @@
       visibleLayer.classList.remove('is-visible');
       visibleLayer = hiddenLayer;
 
-      titleWord.classList.add('is-fading');
-      setTimeout(function () {
-        titleWord.textContent = config.word;
-        titleWord.classList.remove('is-fading');
-      }, TITLE_FADE_MS);
+      // No entrance animation on the word swap for now — it just
+      // updates immediately alongside the background crossfade above.
+      titleWord.textContent = config.word;
 
       thumbs.querySelectorAll('.site-header__thumb').forEach(function (el) {
         el.classList.remove('is-active');
