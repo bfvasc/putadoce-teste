@@ -1,139 +1,159 @@
-/* "O que acreditamos" section — matches Figma frame 40:6
-   "Homepage-Sessao-1" (file kAYJnyqg4kZczqNmndvmeE, "Putadoce | Website").
-   Purely static/informational: a centered heading over a row of 5
-   icon badges, no interactions. Icons are hand-built inline SVGs
-   (matching the project's existing icon convention) approximating the
-   frame's Remix Icon set (palette-line, sun-cloudy-line, cake-2-line,
-   user-smile-line, pen-nib-line) rather than the temporary
-   figma.com/api/mcp/asset URLs get_design_context returned, which
-   expire after 7 days. */
+/* "No que acreditamos" section — matches Figma frame 55:425
+   "Homepage-Sessao-3" (file kAYJnyqg4kZczqNmndvmeE, "Putadoce | Website").
+   Replaces the section's previous "O que acreditamos" content (built
+   from node 40:6): a small centered heading over 5 circular icon
+   badges. The new design is a large left-aligned display heading over
+   a row of 5 colored rounded-rect cards, each with a centered icon
+   and a label below. Icons are the exact vector assets from
+   components/assets/icons/ (design.svg, memoria.svg, sabor.svg,
+   personalidade.svg, autoral.svg), inlined with fill="currentColor"
+   so each card's color rule below (not the files' own baked-in fill,
+   which is inconsistent across them) controls the rendered icon
+   color — this is what makes the memória/sabor icons render white
+   like the frame instead of the pink hardcoded in those two files.
+
+   Follows the same 12-column grid convention as the portfolio and
+   decorations sections (24px outer margin, 20px gutter), expressed as
+   container-query formulas so it scales fluidly: the heading and card
+   row both span from grid column 2 to column 11, and each card spans
+   2 of the 12 columns (col*2 + 1 internal gutter), matching the
+   frame's 189px card width at the 1280px reference.
+
+   The heading uses the same fluid cqw clamp() and -7% tracking ratio
+   as .portfolio__title (13.28cqw = 170px at the 1280px reference),
+   calibrated the same way against real DM Sans Medium metrics so it
+   scales with the section's own container width. The 132px gap below
+   it and the 126px/218px top/bottom section padding are taken
+   directly from the frame's node coordinates (text bottom at 398,
+   card row top at 530, section height 1030) rather than the site's
+   usual 80px rhythm, since that's what this specific frame uses. */
 
 .beliefs {
+  container-type: inline-size;
+  --col: calc((100cqw - 268px) / 12);
+  --edge: calc(var(--col) + 44px);
+  --card-width: calc(var(--col) * 2 + 20px);
   box-sizing: border-box;
   width: 100%;
-  padding: 120px 24px 183px;
-  text-align: center;
+  padding: 126px 0 218px;
 }
 
 .beliefs__heading {
-  margin: 0 0 80px;
+  box-sizing: border-box;
+  margin: 0 0 132px;
+  padding-inline: var(--edge);
   font-family: 'DM Sans', sans-serif;
   font-weight: 500;
-  font-size: 48px;
-  line-height: 1.1;
-  letter-spacing: -1.44px;
-  color: #000000;
+  font-size: clamp(28px, 13.28cqw, 170px);
+  line-height: 0.8;
+  letter-spacing: -0.07em;
+  color: #ff2b00;
+  text-align: left;
 }
 
 .beliefs__list {
   display: flex;
-  justify-content: center;
   align-items: flex-start;
-  flex-wrap: wrap;
-  gap: 24px 80px;
+  gap: 20px;
+  box-sizing: border-box;
+  padding-inline: var(--edge);
   margin: 0;
-  padding: 0;
   list-style: none;
 }
 
 .beliefs__item {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 24px;
+  align-items: flex-start;
+  gap: 32px;
+  flex: 0 0 var(--card-width);
+  width: var(--card-width);
 }
 
-.beliefs__icon {
+.beliefs__card {
   box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 80px;
-  height: 80px;
-  padding: 3px;
-  border-radius: 360px;
+  width: 100%;
+  aspect-ratio: 189 / 224;
+  border-radius: 12px;
   overflow: hidden;
 }
 
-.beliefs__icon svg {
+.beliefs__card svg {
   display: block;
-  width: 40px;
-  height: 40px;
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
 }
 
-.beliefs__icon--design {
+.beliefs__card--design {
   background: #fee7f6;
   color: #ff2b00;
 }
 
-.beliefs__icon--design svg {
-  width: 33.333px;
-  height: 33.333px;
-}
-
-.beliefs__icon--memoria {
+.beliefs__card--memoria {
   background: #556afe;
   color: #ffffff;
 }
 
-.beliefs__icon--sabor {
+.beliefs__card--sabor {
   background: #ff2b00;
   color: #ffffff;
 }
 
-.beliefs__icon--personalidade {
+.beliefs__card--personalidade {
   background: #fdceed;
   color: #5f1030;
 }
 
-.beliefs__icon--autoral {
-  background: #cad93d;
+.beliefs__card--autoral {
+  background: #eadd02;
   color: #5f1030;
 }
 
 .beliefs__label {
   margin: 0;
+  width: 100%;
   font-family: 'DM Sans', sans-serif;
   font-weight: 500;
-  font-size: 16px;
-  line-height: 1;
-  letter-spacing: -0.48px;
-  color: #000000;
-  white-space: nowrap;
+  font-size: 24px;
+  line-height: 1.1;
+  letter-spacing: -0.72px;
+  color: #ff2b00;
 }
 
 @media (max-width: 640px) {
   .beliefs {
-    padding: 64px 24px 96px;
+    padding: 64px 0 96px;
   }
 
   .beliefs__heading {
+    padding-inline: 24px;
     margin-bottom: 48px;
-    font-size: 32px;
-    letter-spacing: -0.96px;
   }
 
   .beliefs__list {
-    column-gap: 32px;
+    flex-wrap: wrap;
+    padding-inline: 24px;
     row-gap: 32px;
+    column-gap: 16px;
   }
 
-  .beliefs__icon {
-    width: 64px;
-    height: 64px;
+  .beliefs__item {
+    flex: 0 0 calc(50% - 8px);
+    width: calc(50% - 8px);
+    gap: 16px;
   }
 
-  .beliefs__icon svg {
-    width: 32px;
-    height: 32px;
-  }
-
-  .beliefs__icon--design svg {
-    width: 26.667px;
-    height: 26.667px;
+  .beliefs__card svg {
+    width: 40px;
+    height: 40px;
   }
 
   .beliefs__label {
-    font-size: 14px;
+    font-size: 18px;
+    letter-spacing: -0.54px;
   }
 }
