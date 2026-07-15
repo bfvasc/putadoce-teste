@@ -27,60 +27,55 @@
 
 /* Title */
 
+/* Back to a single line ("Nós amamos [word]") rather than the
+   previous two-line layout. Measured against a real static instance
+   of the DM Sans variable font at wght=600 (SemiBold — the actual
+   font-face this title now renders in; a lighter weight's metrics
+   would under-measure the true width) at -0.02em tracking (the -2px
+   spec at this rule's 100px cap, expressed as em so it holds the same
+   ratio across the fluid clamp() instead of only matching at 100px):
+   "Nós amamos buttercream" is the widest of the four possible full
+   lines, at 12.174x the font-size. 7vw keeps that line comfortably
+   inside the viewport minus the site's 24px side margins at every
+   width from 390px up to the 100px cap (which kicks in at a ~1429px
+   viewport), instead of the ~85%-of-viewport budget the old two-line
+   version used — a single, much longer line needs more headroom
+   against those margins at small widths. */
+/* Positioned from the bottom rather than vertically centered
+   (top:50%): centering ties the title's position to viewport height
+   alone, which can't guarantee a fixed minimum gap above the
+   thumbnails on short-but-wide viewports (e.g. a 1440x800 window
+   only leaves ~148px there when centered — under the required
+   180px). Anchoring from the bottom instead makes the gap exact and
+   independent of viewport height: the thumbnails sit 132px + 80px
+   (their own height) = 212px above the header's bottom edge, so
+   212px + 180px = 392px guarantees the required gap at every
+   height, matching the thumbnails' own bottom-anchored positioning
+   style. (Mobile thumbnails are smaller/closer to the bottom, so the
+   same 392px value only leaves more headroom there, never less.) */
 .site-header__title {
   position: absolute;
-  top: 50%;
   left: 50%;
+  bottom: 392px;
   z-index: 2;
   margin: 0;
-  transform: translate(-50%, -50%);
+  transform: translateX(-50%);
   font-family: 'DM Sans', sans-serif;
-  font-weight: 500;
-  /* Two lines share this font-size. Measured against the real DM
-     Sans Medium metrics at -0.03em tracking (the same ratio used
-     site-wide for DM Sans headings): "Nós amamos" — the fixed first
-     line — is actually the widest line across every state, at 5.838x
-     the font-size, wider even than "buttercream" (5.656x), the
-     longest of the four variable second lines. 14.56vw keeps that
-     widest line at ~85% of viewport width at any size below the
-     120px cap, which kicks in at a ~824px viewport. */
-  font-size: clamp(24px, 14.56vw, 120px);
+  font-weight: 600;
+  font-size: clamp(24px, 7vw, 100px);
   line-height: 80%;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
   color: #ffffff;
   text-align: center;
   white-space: nowrap;
   transition: opacity 0.3s ease;
 }
 
-/* Initial-load gate: hides the whole title until DM Sans is
+/* Initial-load gate: hides the whole title until DM Sans SemiBold is
    confirmed loaded (see revealTitleOnceFontIsReady in header.js),
-   avoiding a fallback-font flash on first paint. Separate from the
-   per-word swap animation below, which only ever affects the second
-   line. */
+   avoiding a fallback-font flash on first paint. */
 .site-header__title.is-loading {
   opacity: 0;
-}
-
-.site-header__title-line {
-  display: block;
-}
-
-/* Swap animation for the variable second line: fades out
-   (is-fading), the text is swapped while still hidden, then fading
-   back in with a slight upward slide — the same fade+slide-up
-   pattern used for entrances elsewhere on the site (nav-menu items,
-   the decorations cards, the sobre heading/button). The fixed first
-   line has no such class, so it's untouched by any of this. */
-.site-header__title-line--variable {
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity 0.35s ease, transform 0.35s ease;
-}
-
-.site-header__title-line--variable.is-fading {
-  opacity: 0;
-  transform: translateY(12px);
 }
 
 /* Thumbnails */
