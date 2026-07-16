@@ -21,20 +21,20 @@
    unchanged from before. */
 
 /* Top/bottom padding are the two fixed, non-negotiable gaps from the
-   task spec: 192px = the real nav bar's 72px height + the required
-   120px clearance below it to the first item, and 60px between the
-   social row and the screen's bottom edge. The 120px gap between the
+   task spec: 152px = the real nav bar's 72px height + the required
+   80px clearance below it to the first item, and 40px between the
+   social row and the screen's bottom edge. The 80px gap between the
    last item and the social row isn't set here as a fixed value at
    all — .nav-menu__social's margin-top: auto (below) fills whatever
    space remains between the items and the padding-bottom, and
    nav-menu.js computes --nav-menu-item-font-size (see .nav-menu__item)
-   specifically so that leftover space equals exactly 120px whenever
+   specifically so that leftover space equals exactly 80px whenever
    possible, only growing past that on tall/capped screens instead of
    ever shrinking below it.
 
    overflow-y: auto (not hidden) is a deliberate safety net: the three
    fixed gaps plus the nav bar, social row and every item's own
-   border/padding already add up to 576px before a single pixel of
+   border/padding already add up to 476px before a single pixel of
    text is drawn, which is taller than some real short viewports
    (e.g. a phone in landscape) even at the smallest readable font-size
    nav-menu.js will pick. Rather than silently clipping the social
@@ -52,7 +52,7 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  padding: 192px 24px 60px;
+  padding: 152px 24px 40px;
   background: #ff2b00;
   overflow-x: hidden;
   overflow-y: auto;
