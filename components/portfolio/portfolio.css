@@ -42,11 +42,18 @@
 /* Wraps the title and its link-to-portfolio arrow in a row so the
    arrow sits beside the text, top-aligned with it (align-items:
    flex-start) rather than centered against the heading's full
-   two-line height. */
+   two-line height. Stretched to the header's full content width
+   (the flex column's default align-items: stretch, since nothing
+   here overrides it) with justify-content: space-between so the
+   arrow's right edge lands exactly on column 11 — matching the
+   frame's arrow position (x=1032, size 120 → right edge at 1152,
+   the same as --edge's right boundary at the 1280px reference) —
+   instead of sitting wherever a plain gap after the text happened
+   to put it. */
 .portfolio__title-row {
-  align-self: flex-start;
   display: flex;
   align-items: flex-start;
+  justify-content: space-between;
   gap: 20px;
 }
 
@@ -55,14 +62,14 @@
   font-family: 'DM Sans', sans-serif;
   font-weight: 500;
   /* Fluid via the section's own container width (cqw, not vw) so it
-     scales with however wide .portfolio actually is. 13.28cqw puts
-     the font-size at exactly 170px when the container is 1280px wide
-     (matching Frame B's reference), and since "Putadoce" — the wider
-     of the two lines — is a fixed 4.048x the font-size (measured
-     against real DM Sans Medium metrics at the -0.07em tracking
-     below), it stays proportional to the container at ~54% of its
+     scales with however wide .portfolio actually is. 12.5cqw puts
+     the font-size at exactly 160px when the container is 1280px wide,
+     and since "Putadoce" — the wider of the two lines — is a fixed
+     4.048x the font-size (measured against real DM Sans Medium
+     metrics at the -0.07em tracking below, independent of the cap
+     itself), it stays proportional to the container at ~50.6% of its
      width at any size, never overflowing. */
-  font-size: clamp(28px, 13.28cqw, 170px);
+  font-size: clamp(28px, 12.5cqw, 160px);
   line-height: 0.8;
   letter-spacing: -0.07em;
   color: #ff2b00;
@@ -164,7 +171,6 @@
     margin-bottom: 40px;
   }
 
-  .portfolio__title-row,
   .portfolio__heading {
     align-self: flex-start;
     text-align: left;
