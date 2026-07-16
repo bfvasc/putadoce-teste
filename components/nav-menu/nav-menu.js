@@ -6,9 +6,9 @@
   // updateItemFontSize below): fixed gaps in px, plus the item
   // font-size's own min/max bounds. GAP_TOP is measured below the
   // real nav bar, not from the very top of the viewport.
-  var GAP_TOP_PX = 120;
-  var GAP_MIDDLE_PX = 120;
-  var GAP_BOTTOM_PX = 60;
+  var GAP_TOP_PX = 80;
+  var GAP_MIDDLE_PX = 80;
+  var GAP_BOTTOM_PX = 40;
   var ITEM_FONT_MIN_PX = 28;
   var ITEM_FONT_MAX_PX = 80;
 
