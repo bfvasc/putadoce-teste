@@ -2,6 +2,16 @@
   var ITEMS = ['Home', 'Portfolio', 'Sobre', 'Contato'];
   var STAGGER_MS = 70;
 
+  // Vertical layout spec for the fullscreen menu (see
+  // updateItemFontSize below): fixed gaps in px, plus the item
+  // font-size's own min/max bounds. GAP_TOP is measured below the
+  // real nav bar, not from the very top of the viewport.
+  var GAP_TOP_PX = 120;
+  var GAP_MIDDLE_PX = 120;
+  var GAP_BOTTOM_PX = 60;
+  var ITEM_FONT_MIN_PX = 28;
+  var ITEM_FONT_MAX_PX = 80;
+
   var MENU_ICON_SVG =
     '<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">' +
       '<path d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z"/>' +
@@ -69,6 +79,57 @@
     var isOpen = false;
     var contentTimer = null;
 
+    // Solves for the item font-size that makes the 4 items — their
+    // own line-height plus each one's fixed border/padding — plus
+    // the three fixed gaps from the spec (GAP_TOP_PX below the nav
+    // bar, GAP_MIDDLE_PX above the social row, GAP_BOTTOM_PX below
+    // it) add up to exactly the viewport height. A purely
+    // width-based fluid size (the old clamp(…vw…)) can't account for
+    // this: on a short-but-wide viewport, 4 items at a width-driven
+    // size can still be taller than the screen, pushing the social
+    // row off-screen — this is measured against actual height
+    // instead, every time the menu opens or the window resizes.
+    //
+    // border-top-width/padding are read via getComputedStyle rather
+    // than hardcoded, so this keeps working correctly if
+    // .nav-menu__item's own CSS ever changes. The line-height ratio
+    // is likewise derived from the *current* rendered font-size/line-
+    // height rather than hardcoding "1.1" a second time here, for the
+    // same reason.
+    function updateItemFontSize() {
+      var firstItem = list.querySelector('.nav-menu__item');
+      if (!firstItem) {
+        return;
+      }
+
+      var itemStyle = getComputedStyle(firstItem);
+      var currentFontSize = parseFloat(itemStyle.fontSize);
+      var lineHeightRatio = parseFloat(itemStyle.lineHeight) / currentFontSize;
+      var itemChrome =
+        parseFloat(itemStyle.borderTopWidth) +
+        parseFloat(itemStyle.paddingTop) +
+        parseFloat(itemStyle.paddingBottom);
+
+      var nav = document.querySelector('.site-header__nav');
+      var navHeight = nav ? nav.getBoundingClientRect().height : 72;
+      var socialHeight = social.getBoundingClientRect().height || 40;
+      var viewportHeight = window.innerHeight;
+
+      var available =
+        viewportHeight -
+        navHeight -
+        GAP_TOP_PX -
+        GAP_MIDDLE_PX -
+        GAP_BOTTOM_PX -
+        socialHeight -
+        ITEMS.length * itemChrome;
+
+      var fontSize = available / (ITEMS.length * lineHeightRatio);
+      fontSize = Math.max(ITEM_FONT_MIN_PX, Math.min(ITEM_FONT_MAX_PX, fontSize));
+
+      drawer.style.setProperty('--nav-menu-item-font-size', fontSize + 'px');
+    }
+
     function setButtonState(open) {
       menuBtn.innerHTML = open
         ? '<span>Fechar</span>' + CLOSE_ICON_SVG
@@ -78,6 +139,7 @@
 
     function openMenu() {
       isOpen = true;
+      updateItemFontSize();
       document.body.classList.add('nav-menu-open');
       drawer.classList.add('is-open');
       setButtonState(true);
@@ -118,6 +180,21 @@
       if (isOpen && event.key === 'Escape') {
         closeMenu();
       }
+    });
+
+    // Re-run the height-based font-size calculation on resize (e.g.
+    // rotating a phone, or resizing a desktop window) while the menu
+    // is open — rAF-debounced so a drag-resize doesn't recalculate
+    // on every intermediate event.
+    var resizeRaf = null;
+    window.addEventListener('resize', function () {
+      if (!isOpen) {
+        return;
+      }
+      if (resizeRaf) {
+        cancelAnimationFrame(resizeRaf);
+      }
+      resizeRaf = requestAnimationFrame(updateItemFontSize);
     });
   }
 
