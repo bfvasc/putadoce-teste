@@ -20,6 +20,28 @@
    list's sequential stagger reveal (is-content-visible below) is
    unchanged from before. */
 
+/* Top/bottom padding are the two fixed, non-negotiable gaps from the
+   task spec: 192px = the real nav bar's 72px height + the required
+   120px clearance below it to the first item, and 60px between the
+   social row and the screen's bottom edge. The 120px gap between the
+   last item and the social row isn't set here as a fixed value at
+   all — .nav-menu__social's margin-top: auto (below) fills whatever
+   space remains between the items and the padding-bottom, and
+   nav-menu.js computes --nav-menu-item-font-size (see .nav-menu__item)
+   specifically so that leftover space equals exactly 120px whenever
+   possible, only growing past that on tall/capped screens instead of
+   ever shrinking below it.
+
+   overflow-y: auto (not hidden) is a deliberate safety net: the three
+   fixed gaps plus the nav bar, social row and every item's own
+   border/padding already add up to 576px before a single pixel of
+   text is drawn, which is taller than some real short viewports
+   (e.g. a phone in landscape) even at the smallest readable font-size
+   nav-menu.js will pick. Rather than silently clipping the social
+   row off-screen in that case — the exact bug this rework fixes —
+   the panel scrolls instead, so everything stays reachable. It's
+   invisible the rest of the time, since content only overflows when
+   the height math genuinely can't be satisfied by font-size alone. */
 .nav-menu__drawer {
   position: fixed;
   inset: 0;
@@ -30,9 +52,10 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  padding: 160px 24px 64px;
+  padding: 192px 24px 60px;
   background: #ff2b00;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   transform: translateX(100%);
   transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
 }
@@ -51,14 +74,18 @@
    negative-margin line stacking, which was only needed for the
    previous borderless design.
 
-   Font-size: the widest item ("Portfolio") measured against real DM
-   Sans Medium metrics at -0.03em tracking (the same -3% ratio used
-   site-wide, matching the frame's -2.4px at 80px) is 3.724x the
-   font-size. 18vw keeps that plus the 40px hover-arrow comfortably
-   inside the panel's 24px side margins at any width down to ~320px,
-   capping at the frame's 80px around a ~444px viewport — a
-   fullscreen panel has far more room than the old 630px drawer did,
-   so the cap kicks in much earlier. */
+   Font-size is computed by nav-menu.js (updateItemFontSize) rather
+   than fixed or width-based: with 4 items always on screen, a
+   width-only fluid formula could still overflow the *height* of a
+   short-but-wide viewport, pushing the social row below the fold.
+   The --nav-menu-item-font-size custom property is set on
+   .nav-menu__drawer when the menu opens and on resize while it's
+   open, solving for the size that makes the 4 items (their line
+   height, border and padding) plus the spec's fixed gaps add up to
+   exactly the viewport height, capped at the frame's 80px and
+   floored so text never gets unreadably small. The clamp() here is
+   only a fallback for the (non-JS) initial paint before that
+   property is first set. */
 .nav-menu__item {
   display: flex;
   align-items: flex-start;
@@ -69,7 +96,7 @@
   border-top: 1px solid #ffffff;
   font-family: 'DM Sans', sans-serif;
   font-weight: 500;
-  font-size: clamp(32px, 18vw, 80px);
+  font-size: var(--nav-menu-item-font-size, clamp(32px, 18vw, 80px));
   line-height: 1.1;
   letter-spacing: -0.03em;
   color: #ffffff;
@@ -155,11 +182,10 @@ body.nav-menu-open .site-header__logo-img {
   transition: filter 0.3s ease;
 }
 
+/* Side padding/gap only — the drawer's top/bottom padding is a fixed
+   part of the height calculation above and stays the same at every
+   width. */
 @media (max-width: 640px) {
-  .nav-menu__drawer {
-    padding: 120px 24px 40px;
-  }
-
   .nav-menu__item {
     gap: 16px;
   }
