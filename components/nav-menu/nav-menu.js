@@ -1,5 +1,10 @@
 (function () {
-  var ITEMS = ['Home', 'Portfolio', 'Sobre', 'Contato'];
+  var ITEMS = [
+    { label: 'Home', href: 'index.html' },
+    { label: 'Portfolio', href: 'portfolio.html' },
+    { label: 'Sobre', href: '#' },
+    { label: 'Contato', href: '#' }
+  ];
   var STAGGER_MS = 70;
 
   // Vertical layout spec for the fullscreen menu (see
@@ -54,13 +59,13 @@
 
     var list = document.createElement('nav');
     list.className = 'nav-menu__list';
-    ITEMS.forEach(function (label, index) {
+    ITEMS.forEach(function (item, index) {
       var link = document.createElement('a');
       link.className = 'nav-menu__item';
-      link.href = '#';
+      link.href = item.href;
       link.style.transitionDelay = index * STAGGER_MS + 'ms';
       link.innerHTML =
-        '<span class="nav-menu__item-text">' + label + '</span>' +
+        '<span class="nav-menu__item-text">' + item.label + '</span>' +
         '<span class="nav-menu__item-icon">' + ARROW_LINK_SVG + '</span>';
       list.appendChild(link);
     });
