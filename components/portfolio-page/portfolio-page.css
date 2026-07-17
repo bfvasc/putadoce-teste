@@ -1,15 +1,180 @@
-/* portfolio.html's main content area. Intentionally empty for now —
-   the portfolio grid will be built here in a follow-up step once the
-   images are ready. padding-top just clears the fixed nav (72px tall)
-   so it doesn't overlap the footer below while this is blank; a
-   min-height keeps the page from collapsing to almost nothing in the
-   meantime. Both are expected to be superseded once real content
-   lands here. */
+/* portfolio.html's main content area — matches Figma frame 53:34
+   "Portfolio" (file kAYJnyqg4kZczqNmndvmeE, "Putadoce | Website"): a
+   "Putadoce Lab" display heading over a list of collection rows,
+   each with a title + link-out arrow and a row of 3 photos.
 
+   Unlike the homepage's .portfolio section (which insets its content
+   to grid columns 2–11 via a --edge custom property), this page's
+   content spans the full 12-column grid with a flat 24px outer
+   margin — the same convention footer.css already uses on this same
+   page, confirmed by the frame's own absolute coordinates (content
+   left/width = 24px / 1232px, i.e. 1280 - 2*24, not the narrower
+   --edge-inset width used on the homepage). Each collection row
+   reuses that same 12-column math internally (a title+arrow block
+   spanning columns 1–4, photos spanning columns 5–12), the same
+   nested-grid technique footer.css's three text columns already use. */
+
+/* portfolio.html has no loading animation, so unlike index.html it
+   never loads loading.css — which is where the site's global
+   `body { margin: 0 }` reset lives. Without it, the browser's default
+   8px body margin narrows this page's actual available width (fixed-
+   position elements like nav.css's nav bar are unaffected, but this
+   component and footer.css, both in normal document flow, aren't),
+   throwing off the cqw/grid math below. Reset it here instead. */
+body {
+  margin: 0;
+}
+
+/* No horizontal padding here — cqw units below need to resolve
+   against the page's full width (matching the frame's 1280px
+   reference exactly), not a width already narrowed by this
+   element's own padding. The 24px side margins live on the heading
+   and list below instead, the same split used by .decorations and
+   .beliefs on the homepage. */
 .portfolio-page {
+  container-type: inline-size;
   display: block;
   box-sizing: border-box;
   width: 100%;
-  min-height: 40vh;
-  padding-top: 72px;
+  padding: 211px 0 0;
+}
+
+/* Same fluid display-heading treatment used site-wide (.portfolio__title
+   on the homepage, .beliefs__heading, .decorations__heading): 13.28cqw
+   puts the font-size at exactly 170px when the container is 1280px
+   wide (matching the frame), scaling with the page's own width via
+   cqw so it never overflows. "Putadoce "/"Lab" is forced onto two
+   lines with an explicit <br>, matching the frame's own line breaks. */
+.portfolio-page__heading {
+  margin: 0 0 40px;
+  padding-inline: 24px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  font-size: clamp(28px, 13.28cqw, 170px);
+  line-height: 0.8;
+  letter-spacing: -0.07em;
+  color: #ff2b00;
+  text-align: left;
+}
+
+.portfolio-page__list {
+  display: flex;
+  flex-direction: column;
+  margin: 0 0 40px;
+  padding: 0 24px;
+  list-style: none;
+}
+
+.portfolio-page__item {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  column-gap: 20px;
+  align-items: flex-start;
+  box-sizing: border-box;
+  padding: 40px 0;
+  border-top: 1px solid #ff2b00;
+}
+
+.portfolio-page__item-link {
+  grid-column: 1 / 5;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  text-decoration: none;
+  color: #ff2b00;
+  transition: opacity 0.18s ease;
+}
+
+.portfolio-page__item-link:hover {
+  opacity: 0.7;
+}
+
+.portfolio-page__item-title {
+  margin: 0;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  font-size: 40px;
+  line-height: 1.1;
+  letter-spacing: -1.2px;
+  color: #ff2b00;
+}
+
+.portfolio-page__item-icon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+}
+
+.portfolio-page__item-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.portfolio-page__item-images {
+  grid-column: 5 / 13;
+  display: flex;
+  gap: 22px;
+}
+
+.portfolio-page__item-image {
+  display: block;
+  flex: 1 1 0;
+  min-width: 0;
+  aspect-ratio: 257 / 220;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.portfolio-page__item-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (max-width: 640px) {
+  .portfolio-page {
+    padding: 128px 0 0;
+  }
+
+  .portfolio-page__heading {
+    margin-bottom: 24px;
+  }
+
+  .portfolio-page__list {
+    margin-bottom: 24px;
+  }
+
+  .portfolio-page__item {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 24px 0;
+  }
+
+  .portfolio-page__item-link {
+    width: 100%;
+  }
+
+  .portfolio-page__item-title {
+    font-size: 28px;
+    letter-spacing: -0.84px;
+  }
+
+  .portfolio-page__item-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .portfolio-page__item-images {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .portfolio-page__item-image {
+    flex: 0 0 calc(50% - 6px);
+    width: calc(50% - 6px);
+  }
 }
