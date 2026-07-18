@@ -136,8 +136,8 @@ body {
   padding: 120px 24px 120px;
 }
 
-/* 3.75vw hits exactly 48px at the frame's 1280px reference width
-   (48 / 1280 = 0.0375); 28px floor matches the same minimum used by
+/* 4.375vw hits exactly 56px at the frame's 1280px reference width
+   (56 / 1280 = 0.04375); 28px floor matches the same minimum used by
    .about__text and .portfolio-page__heading. -0.07em matches the
    frame's own -3.36px tracking at 48px, the same -7% ratio already
    used for .portfolio-page__heading/.beliefs__heading/.decorations__heading. */
@@ -147,7 +147,7 @@ body {
   margin: 0;
   font-family: 'DM Sans', sans-serif;
   font-weight: 500;
-  font-size: clamp(28px, 3.75vw, 48px);
+  font-size: clamp(28px, 4.375vw, 56px);
   line-height: 1;
   letter-spacing: -0.07em;
   color: #ff2b00;
@@ -159,8 +159,8 @@ body {
   margin-top: 100px;
   font-family: 'DM Sans', sans-serif;
   font-weight: 500;
-  font-size: 16px;
-  line-height: 1.1;
+  font-size: 20px;
+  line-height: 120%;
   /* Matches the frame's own -1.12px tracking at 16px — the same -7%
      ratio as the heading above, expressed as em since this text isn't
      otherwise fluid. */
