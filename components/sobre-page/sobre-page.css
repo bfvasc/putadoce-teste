@@ -140,9 +140,17 @@ body {
    (56 / 1280 = 0.04375); 28px floor matches the same minimum used by
    .about__text and .portfolio-page__heading. -0.07em matches the
    frame's own -3.36px tracking at 48px, the same -7% ratio already
-   used for .portfolio-page__heading/.beliefs__heading/.decorations__heading. */
+   used for .portfolio-page__heading/.beliefs__heading/.decorations__heading.
+
+   grid-column widened from the frame's own 5/12 (7 columns, 711px —
+   sized for the frame's 48px text) to 5/13 (8 columns, 814.67px),
+   reusing .sobre-content__images's own span below. Needed once the
+   heading grew to 56px: at 7 columns the widest of the 4 explicit
+   lines below ("uma paixão em comum: os doces") measures ~772px
+   against real DM Sans Medium metrics, already past 711px, so a hard
+   <br> there would still wrap a 5th line without the extra room. */
 .sobre-content__heading {
-  grid-column: 5 / 12;
+  grid-column: 5 / 13;
   grid-row: 1;
   margin: 0;
   font-family: 'DM Sans', sans-serif;
