@@ -2,7 +2,7 @@
   var ITEMS = [
     { label: 'Home', href: 'index.html' },
     { label: 'Portfolio', href: 'portfolio.html' },
-    { label: 'Sobre', href: '#' },
+    { label: 'Sobre', href: 'sobre.html' },
     { label: 'Contato', href: '#' }
   ];
   var STAGGER_MS = 70;
