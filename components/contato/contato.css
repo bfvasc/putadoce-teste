@@ -1,24 +1,17 @@
 /* contato.html — matches Figma frame 94:19 "Contato" (file
    kAYJnyqg4kZczqNmndvmeE, "Putadoce | Website"): a short "get in touch"
-   prompt, a photo of the team surrounded by three playful stickers, and
-   a giant mailto link.
+   prompt sitting close under the nav, and a giant mailto link below it.
+
+   The frame originally also had a team photo with 3 sticker badges to
+   its right; the frame was later edited in Figma to remove that photo
+   cluster and move the remaining text up (closer to the nav), which is
+   what this file now matches — see git history for the removed photo/
+   sticker rules if that composition needs to come back.
 
    Follows this site's flat 12-column grid convention (24px outer
    margin, 20px gutter) already used by footer.css/portfolio-page.css/
-   sobre-page.css. The text block and photo sit side by side in the
-   same grid row (columns 2/10 and 9/12, matching the frame's own
-   x-coordinates), then the huge email spans the full grid below.
-
-   The 3 sticker badges (94:79/94:108/94:130 in the frame) are Figma
-   vector artwork with hand-lettered text baked into raster/vector
-   layers — this session's sandbox can't reach figma.com to download
-   those assets directly (network policy blocks it), so they're
-   rebuilt here as simple CSS blob shapes with real DM Sans text
-   instead: same copy, same approximate position/size/rotation (read
-   from the frame's own coordinates), but approximated colors (the
-   frame's precise swatches weren't extractable without the asset
-   download) and the site's own DM Sans font rather than the
-   original hand-lettered typeface. */
+   sobre-page.css. Both blocks are simple full-width-relative flow
+   content now that there's no photo to sit alongside. */
 
 body {
   margin: 0;
@@ -30,7 +23,7 @@ body {
   column-gap: 20px;
   box-sizing: border-box;
   width: 100%;
-  padding: 176px 24px 0;
+  padding: 382px 24px 0;
 }
 
 /* clamp hits exactly 32px at the frame's 1280px reference width
@@ -40,7 +33,7 @@ body {
 .contato__text {
   grid-column: 2 / 10;
   grid-row: 1;
-  margin: 376px 0 0;
+  margin: 0;
   font-family: 'DM Sans', sans-serif;
   font-weight: 500;
   font-size: clamp(20px, 2.5vw, 32px);
@@ -51,90 +44,6 @@ body {
 
 .contato__text p {
   margin: 0;
-}
-
-/* aspect-ratio keeps the 292x380 reference proportions at any grid
-   width; the 3 stickers below are positioned as percentages of this
-   box (derived from the frame's own coordinates relative to the
-   photo's), so they stay correctly anchored to it at any size. */
-.contato__photo-wrap {
-  grid-column: 9 / 12;
-  grid-row: 1;
-  position: relative;
-  margin-top: 66px;
-  aspect-ratio: 292 / 380;
-}
-
-.contato__photo {
-  display: block;
-  position: absolute;
-  inset: 0;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.contato__photo img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.contato__sticker {
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.2em;
-  padding: 10%;
-  box-sizing: border-box;
-  text-align: center;
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 600;
-  line-height: 1.15;
-}
-
-.contato__sticker--serotonina {
-  left: -33.6%;
-  top: -17.25%;
-  width: 53.4%;
-  aspect-ratio: 155.97 / 130.96;
-  transform: rotate(-8deg);
-  border-radius: 60% 40% 45% 55% / 55% 45% 55% 45%;
-  background: #ebf767;
-  color: #5f1030;
-  font-size: clamp(10px, 1.2vw, 16px);
-}
-
-.contato__sticker--moderacao {
-  left: -71.1%;
-  top: 9.4%;
-  width: 52.4%;
-  aspect-ratio: 152.94 / 125.77;
-  transform: rotate(-11.23deg);
-  border-radius: 50% 50% 45% 55% / 60% 55% 45% 40%;
-  background: #5b6ef5;
-  color: #ffffff;
-  font-size: clamp(9px, 1vw, 14px);
-}
-
-.contato__sticker--edicao {
-  left: -31.2%;
-  top: 81.6%;
-  width: 51.3%;
-  aspect-ratio: 149.92 / 121.15;
-  transform: rotate(8.95deg);
-  border-radius: 50% 50% 40% 60% / 55% 60% 40% 45%;
-  background: #ffc2e0;
-  color: #5f1030;
-  font-size: clamp(11px, 1.1vw, 15px);
-}
-
-.contato__sticker--edicao em {
-  font-style: normal;
-  font-weight: 600;
-  font-size: 0.6em;
 }
 
 /* The frame's own 123px/1232px-available ratio is already tight (the
@@ -158,7 +67,7 @@ body {
   display: block;
   box-sizing: border-box;
   margin: 70px 0 0;
-  padding: 0 24px 64px;
+  padding: 0 24px 60px;
   font-family: 'DM Sans', sans-serif;
   font-weight: 500;
   font-size: clamp(20px, min(9.61vw, calc((100vw - 48px) / 9.943)), 123px);
@@ -171,51 +80,14 @@ body {
 
 @media (max-width: 640px) {
   .contato {
-    padding: 112px 24px 0;
+    padding: 240px 24px 0;
   }
 
   .contato__text {
     grid-column: 1 / -1;
-    grid-row: 1;
-    margin-top: 0;
-  }
-
-  /* The desktop sticker offsets (e.g. -71% for .contato__sticker--moderacao)
-     are calibrated for the wide composition around a 292px-reference
-     photo with lots of surrounding page width to spill into. At a
-     390px viewport there isn't room for that much overhang without
-     clipping past the 24px side margin, so the photo gets a smaller
-     fixed width (not the desktop aspect-ratio box) and each sticker
-     gets its own reduced offset here, keeping the whole cluster
-     (photo + stickers) inside the viewport instead of literally
-     rescaling the desktop percentages. */
-  .contato__photo-wrap {
-    grid-column: 1 / -1;
-    grid-row: 2;
-    width: 210px;
-    margin: 96px auto 0;
-  }
-
-  .contato__sticker--serotonina {
-    left: -20%;
-    top: -14%;
-    width: 56%;
-  }
-
-  .contato__sticker--moderacao {
-    left: -33%;
-    top: 8%;
-    width: 54%;
-  }
-
-  .contato__sticker--edicao {
-    left: -20%;
-    top: 78%;
-    width: 54%;
   }
 
   .contato__email {
-    grid-row: 3;
     margin-top: 56px;
     padding-bottom: 48px;
   }
