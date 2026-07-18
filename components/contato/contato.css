@@ -10,20 +10,51 @@
 
    Follows this site's flat 12-column grid convention (24px outer
    margin, 20px gutter) already used by footer.css/portfolio-page.css/
-   sobre-page.css. Both blocks are simple full-width-relative flow
-   content now that there's no photo to sit alongside. */
+   sobre-page.css. The text and email are pinned a fixed distance from
+   the viewport bottom (see .contato__pinned below) rather than sitting
+   in .contato's own document flow. */
 
 body {
   margin: 0;
 }
 
 .contato {
+  min-height: 100vh;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+/* The text and email used to be positioned by ordinary document flow
+   (padding-top on .contato, margin-top on the email) — now they're
+   pinned a fixed distance from the *viewport* bottom instead, holding
+   exactly on any viewport height/scroll position rather than drifting
+   with whatever content happens to sit above them. position: fixed
+   (not absolute) is required for that "always" guarantee: absolute
+   would only match the viewport bottom at the top of the page, before
+   any scrolling.
+
+   Reuses the same 12-column grid definition (24px outer margin, 20px
+   gutter) the rest of the page already uses, just as a fixed-position
+   element instead of .contato's own in-flow grid, so the text/email's
+   horizontal position (columns 2/10 and 1/-1) is unchanged. row-gap:80px
+   is what actually creates the required 80px gap between the text
+   block's bottom edge and the email's top edge; bottom:40px on this
+   wrapper — with no bottom padding and the email as the last grid row —
+   puts the email's own bottom edge exactly 40px above the viewport
+   bottom, since a block's bottom edge coincides with its last child's
+   bottom edge when there's nothing after it to add space. */
+.contato__pinned {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 40px;
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   column-gap: 20px;
+  row-gap: 80px;
   box-sizing: border-box;
   width: 100%;
-  padding: 382px 24px 0;
+  padding: 0 24px;
 }
 
 /* clamp hits exactly 32px at the frame's 1280px reference width
@@ -66,8 +97,8 @@ body {
   grid-row: 2;
   display: block;
   box-sizing: border-box;
-  margin: 70px 0 0;
-  padding: 0 24px 60px;
+  margin: 0;
+  padding: 0;
   font-family: 'DM Sans', sans-serif;
   font-weight: 500;
   font-size: clamp(20px, min(9.61vw, calc((100vw - 48px) / 9.943)), 123px);
@@ -79,16 +110,7 @@ body {
 }
 
 @media (max-width: 640px) {
-  .contato {
-    padding: 240px 24px 0;
-  }
-
   .contato__text {
     grid-column: 1 / -1;
-  }
-
-  .contato__email {
-    margin-top: 56px;
-    padding-bottom: 48px;
   }
 }
