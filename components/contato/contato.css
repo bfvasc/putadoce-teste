@@ -10,44 +10,37 @@
 
    Follows this site's flat 12-column grid convention (24px outer
    margin, 20px gutter) already used by footer.css/portfolio-page.css/
-   sobre-page.css. The text and email are pinned a fixed distance from
-   the viewport bottom (see .contato__pinned below) rather than sitting
-   in .contato's own document flow. */
+   sobre-page.css. The text and email sit near the bottom of an initial,
+   full-viewport-height section (see .contato__bottom below), but in
+   ordinary document flow — not fixed/sticky — so they scroll away with
+   the rest of the page like any other content. */
 
 body {
   margin: 0;
 }
 
+/* min-height: 100vh + a bottom-anchored flex column is what makes the
+   *initial* (unscrolled) layout land the email 40px above the viewport
+   bottom and the text 80px above that, without pinning anything to the
+   viewport: .contato is simply tall enough on load that its own last
+   child sits at that spot through normal flow, and it scrolls away
+   exactly like the rest of the page once the user scrolls. */
 .contato {
   min-height: 100vh;
   box-sizing: border-box;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding-bottom: 40px;
 }
 
-/* The text and email used to be positioned by ordinary document flow
-   (padding-top on .contato, margin-top on the email) — now they're
-   pinned a fixed distance from the *viewport* bottom instead, holding
-   exactly on any viewport height/scroll position rather than drifting
-   with whatever content happens to sit above them. position: fixed
-   (not absolute) is required for that "always" guarantee: absolute
-   would only match the viewport bottom at the top of the page, before
-   any scrolling.
-
-   Reuses the same 12-column grid definition (24px outer margin, 20px
-   gutter) the rest of the page already uses, just as a fixed-position
-   element instead of .contato's own in-flow grid, so the text/email's
-   horizontal position (columns 2/10 and 1/-1) is unchanged. row-gap:80px
-   is what actually creates the required 80px gap between the text
-   block's bottom edge and the email's top edge; bottom:40px on this
-   wrapper — with no bottom padding and the email as the last grid row —
-   puts the email's own bottom edge exactly 40px above the viewport
-   bottom, since a block's bottom edge coincides with its last child's
-   bottom edge when there's nothing after it to add space. */
-.contato__pinned {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 40px;
+/* Reuses the same 12-column grid definition (24px outer margin, 20px
+   gutter) the rest of the page already uses, so the text/email's
+   horizontal position (columns 2/10 and 1/-1) is unchanged from
+   before. row-gap: 80px is what creates the required 80px gap between
+   the text block's bottom edge and the email's top edge. */
+.contato__bottom {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   column-gap: 20px;
@@ -77,21 +70,20 @@ body {
   margin: 0;
 }
 
-/* The frame's own 123px/1232px-available ratio is already tight (the
-   text measures ~1223px against real DM Sans metrics at -7% tracking —
-   only 9px of slack), so a plain "Xvw hits 123px at 1280" clamp
-   overflows once the fixed 48px side margin stops being negligible on
-   a narrow viewport (verified against real metrics: it would need to
-   drop to ~8.55vw by 320px to stay inside 100vw - 48px, well under
-   the 9.61vw a straight 1280-reference fit gives). "oiputadoce@gmail.com"
-   has no spaces, so overflow here isn't reflow — it's the string
-   getting visually clipped. min() picks whichever is smaller: the
-   plain 9.61vw curve (which reaches exactly 123px at 1280px, matching
-   the frame), or a curve solved directly from the real measured
-   width-to-font-size ratio (9.943) against the actual available width
-   (100vw - 48px) at any viewport. The two curves meet right around
-   1280px, so desktop still lands on the frame's 123px while every
-   smaller viewport stays safely inside its margins. */
+/* Same fluid-heading technique as .site-header__heading on the
+   homepage (clamp a vw-driven font-size against a floor) — but that
+   one caps at a fixed 100px ceiling by design; this one instead
+   targets the 12-column grid's own width as its ceiling, so the email
+   always fills exactly column 1 to the last column (24px margins) at
+   any viewport size rather than plateauing once the viewport passes a
+   fixed pixel value. "oiputadoce@gmail.com" measures 9.943x its own
+   font-size against real DM Sans Medium metrics at -7% tracking, so
+   calc((100vw - 48px) / 9.943) is the font-size whose text width
+   exactly equals the grid's available width (100vw - the 24px side
+   margins) at any viewport — solved directly from the real measured
+   ratio, not fit to one reference width. 20px floor keeps it from
+   going unreadably small on a hypothetical sub-200px viewport (the
+   formula itself never gets that small on any realistic device). */
 .contato__email {
   grid-column: 1 / -1;
   grid-row: 2;
@@ -101,7 +93,7 @@ body {
   padding: 0;
   font-family: 'DM Sans', sans-serif;
   font-weight: 500;
-  font-size: clamp(20px, min(9.61vw, calc((100vw - 48px) / 9.943)), 123px);
+  font-size: max(20px, calc((100vw - 48px) / 9.943));
   line-height: 0.8;
   letter-spacing: -0.07em;
   color: #ff2b00;
