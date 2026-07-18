@@ -3,7 +3,7 @@
     { label: 'Home', href: 'index.html' },
     { label: 'Portfolio', href: 'portfolio.html' },
     { label: 'Sobre', href: 'sobre.html' },
-    { label: 'Contato', href: '#' }
+    { label: 'Contato', href: 'contato.html' }
   ];
   var STAGGER_MS = 70;
 
