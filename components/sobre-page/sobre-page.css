@@ -1,0 +1,105 @@
+/* sobre.html's fullscreen header — matches Figma frame 58:4013
+   "Sobre" (file kAYJnyqg4kZczqNmndvmeE, "Putadoce | Website").
+
+   Structurally the same fullscreen-hero technique as #siteHeader on
+   the homepage (100vh/100dvh, full-bleed background, nav.js's
+   injected nav bar sitting on top via its own fixed position) rather
+   than a new pattern — just a static photo (no thumbnail-swap
+   behavior) with centered white heading text. Background image is
+   components/about/sobre-bg.png, the same team photo already used by
+   the homepage's .sobre card (the frame's own asset is a placeholder
+   photo, not a real one, so this reuses what's actually on hand).
+
+   Entrance animation reuses .sobre__card's exact grow-from-0
+   technique (transform: scale(0) -> scale(1), same cubic-bezier
+   easing/duration) from the homepage's Sobre card, applied to the
+   whole header instead of a smaller card. It's triggered on page
+   load (see sobre-page.js) rather than scroll-into-view, since this
+   section is always the very first thing visible — there's nothing
+   to scroll to. The heading fades/slides in afterward via a
+   transition-delay equal to the scale's own duration, the same
+   sequencing the homepage card's heading/button reveal uses. */
+
+/* sobre.html has no loading animation, so unlike index.html it never
+   loads loading.css — which is where the site's global
+   `body { margin: 0 }` reset lives (see the identical fix in
+   portfolio-page.css). Without it, the browser's default 8px body
+   margin would leave a visible gap down each side of this "fullscreen"
+   header instead of it truly spanning edge-to-edge. */
+body {
+  margin: 0;
+}
+
+.sobre-page-header {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background-color: #5f1030;
+}
+
+.sobre-page-header__bg {
+  position: absolute;
+  inset: 0;
+  background: url('../about/sobre-bg.png') center / cover no-repeat;
+  transform: scale(0);
+  transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Matches the frame's own 10% black scrim over the photo. */
+.sobre-page-header__bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.sobre-page-header.is-visible .sobre-page-header__bg {
+  transform: scale(1);
+}
+
+/* Centered via left:50% + a composed transform (translate(-50%, ...))
+   rather than two nested elements, so the same rule can center the
+   block AND do the reveal's translateY(16px) -> 0 slide in one
+   transform property instead of needing a wrapper just to combine
+   them.
+
+   width (not max-width) is required here: an absolutely positioned
+   element with left set but no width uses shrink-to-fit sizing based
+   on (containing block width - left offset) — at left: 50%, that's
+   only half the viewport, so a max-width alone never gets a chance
+   to apply and "pessoas de" wraps a second time well before it
+   actually runs out of room. An explicit width sidesteps that; each
+   shorter line still centers correctly within it via text-align.
+
+   Font-size: measured "pessoas de" (the widest of the frame's three
+   lines) against real DM Sans Medium metrics at -0.04em tracking
+   (the frame's own -6.4px at 160px) — 5.014x the font-size. 16.5vw
+   keeps that comfortably inside the viewport minus the site's 24px
+   side margins at any width down to ~320px, capping at the frame's
+   160px around a ~970px viewport. */
+.sobre-page-header__heading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  width: calc(100vw - 48px);
+  margin: 0;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  font-size: clamp(28px, 16.5vw, 160px);
+  line-height: 0.8;
+  letter-spacing: -0.04em;
+  color: #ffffff;
+  text-align: center;
+  opacity: 0;
+  transform: translate(-50%, calc(-50% + 16px));
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  transition-delay: 0.6s;
+}
+
+.sobre-page-header.is-visible .sobre-page-header__heading {
+  opacity: 1;
+  transform: translate(-50%, -50%);
+}
