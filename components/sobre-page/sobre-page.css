@@ -103,3 +103,116 @@ body {
   opacity: 1;
   transform: translate(-50%, -50%);
 }
+
+/* sobre.html's content section below the header — matches Figma frame
+   58:4049 "Sobre-Sessao-2" (file kAYJnyqg4kZczqNmndvmeE, "Putadoce |
+   Website"): an intro heading, a two-founder body text block, and a
+   pair of photos. Static, in-flow content (no scroll/load animation),
+   the same treatment as .about on the homepage.
+
+   Follows this page's (and footer.css's) 12-column grid convention —
+   24px outer margin, 20px gutter, flat across the full grid rather
+   than the homepage's narrower --edge inset — confirmed against the
+   frame's own coordinates: the heading/text/first-image column all
+   start at x:441 (== column 5's start, 24 + 4*(84.33+20)), the second
+   image starts at x:858 (== column 9's start), and the widths (711px,
+   398px, 398px) are exactly 7, 4, and 4 grid columns.
+
+   Row spacing (padding-top, and the margin-top values below) comes
+   straight from the frame's vertical gaps rather than replicating its
+   absolute y-coordinates: heading top 120px; heading rendered height
+   192px (4 lines at 48px/line-height:1) then a 100px gap to the text
+   block at y:412; text block height 396px then a 160px gap to the
+   images at y:968; images are 380px tall with 120px left below them
+   before the frame ends at 1468px. Using gaps (not fixed total
+   offsets) keeps this correct even though the heading's own wrapped
+   line count can only be confirmed at the 1280px reference width. */
+.sobre-content {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  column-gap: 20px;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 120px 24px 120px;
+}
+
+/* 3.75vw hits exactly 48px at the frame's 1280px reference width
+   (48 / 1280 = 0.0375); 28px floor matches the same minimum used by
+   .about__text and .portfolio-page__heading. -0.07em matches the
+   frame's own -3.36px tracking at 48px, the same -7% ratio already
+   used for .portfolio-page__heading/.beliefs__heading/.decorations__heading. */
+.sobre-content__heading {
+  grid-column: 5 / 12;
+  grid-row: 1;
+  margin: 0;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  font-size: clamp(28px, 3.75vw, 48px);
+  line-height: 1;
+  letter-spacing: -0.07em;
+  color: #ff2b00;
+}
+
+.sobre-content__text {
+  grid-column: 5 / 9;
+  grid-row: 2;
+  margin-top: 100px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.1;
+  /* Matches the frame's own -1.12px tracking at 16px — the same -7%
+     ratio as the heading above, expressed as em since this text isn't
+     otherwise fluid. */
+  letter-spacing: -0.07em;
+  color: #ff2b00;
+}
+
+.sobre-content__text p {
+  margin: 0;
+}
+
+.sobre-content__images {
+  grid-column: 5 / 13;
+  grid-row: 3;
+  display: flex;
+  gap: 20px;
+  margin-top: 160px;
+}
+
+.sobre-content__image {
+  display: block;
+  flex: 1 1 0;
+  min-width: 0;
+  aspect-ratio: 398 / 380;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.sobre-content__image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (max-width: 640px) {
+  .sobre-content {
+    padding: 64px 24px 64px;
+  }
+
+  .sobre-content__heading {
+    grid-column: 1 / -1;
+  }
+
+  .sobre-content__text {
+    grid-column: 1 / -1;
+    margin-top: 40px;
+  }
+
+  .sobre-content__images {
+    grid-column: 1 / -1;
+    gap: 12px;
+    margin-top: 48px;
+  }
+}
