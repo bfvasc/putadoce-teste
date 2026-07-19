@@ -1,7 +1,7 @@
 (function () {
   var ITEMS = [
     { label: 'Home', href: 'index.html' },
-    { label: 'Portfolio', href: 'portfolio.html' },
+    { label: 'Putadoce Lab', href: 'portfolio.html' },
     { label: 'Sobre', href: 'sobre.html' },
     { label: 'Contato', href: 'contato.html' }
   ];

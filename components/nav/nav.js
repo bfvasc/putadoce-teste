@@ -37,7 +37,7 @@
     var nav = document.createElement('nav');
     nav.className = 'site-header__nav';
     nav.innerHTML =
-      '<a class="site-header__logo" href="#" aria-label="Putadoce">' +
+      '<a class="site-header__logo" href="index.html" aria-label="Putadoce">' +
         '<img class="site-header__logo-img" src="components/assets/Logo.svg" alt="Putadoce" />' +
       '</a>' +
       '<button class="btn-pink site-header__menu-btn" type="button">' +
