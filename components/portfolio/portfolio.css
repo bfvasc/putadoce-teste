@@ -83,11 +83,23 @@
 .portfolio__title-link {
   display: inline-flex;
   flex-shrink: 0;
-  transition: opacity 0.18s ease;
 }
 
-.portfolio__title-link:hover {
-  opacity: 0.7;
+/* The icon is an <img> (arrow-link.svg hardcodes its own #FF2B00 fill,
+   not recolorable via CSS color), so unlike most hover states here
+   there's no color/opacity change on hover — it stays the same red at
+   full opacity, and instead bounces up and down while hovered. */
+@keyframes portfolio-title-link-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.portfolio__title-link:hover img {
+  animation: portfolio-title-link-bounce 0.6s ease-in-out infinite;
 }
 
 .portfolio__title-link img {
@@ -140,6 +152,12 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.35s ease;
+}
+
+/* Same zoom-on-hover treatment as .decorations__card's photos. */
+.portfolio__item:hover img {
+  transform: scale(1.06);
 }
 
 .portfolio__item--1 { aspect-ratio: 241 / 260; background: #556afe; }

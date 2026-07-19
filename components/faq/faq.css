@@ -78,11 +78,15 @@
   text-align: left;
   cursor: pointer;
   color: inherit;
-  transition: opacity 0.18s ease;
 }
 
-.faq__question:hover {
-  opacity: 0.7;
+.faq__question:hover .faq__question-text {
+  color: #5f1030;
+}
+
+.faq__question:hover .faq__icon::before,
+.faq__question:hover .faq__icon::after {
+  background: #5f1030;
 }
 
 .faq__question-text {
@@ -95,6 +99,7 @@
   line-height: 1.1;
   letter-spacing: -1.2px;
   color: #ff2b00;
+  transition: color 0.18s ease;
 }
 
 /* Animated +/- icon: a fixed horizontal bar plus a vertical bar that
@@ -115,7 +120,7 @@
   left: 50%;
   background: #ff2b00;
   transform: translate(-50%, -50%);
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, background-color 0.18s ease;
 }
 
 .faq__icon::before {
