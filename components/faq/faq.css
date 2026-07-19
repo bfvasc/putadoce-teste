@@ -63,6 +63,11 @@
   flex-direction: column;
   padding: 24px 0;
   border-top: 1px solid #ff2b00;
+  transition: border-top-color 0.18s ease;
+}
+
+.faq__item:has(.faq__question:hover) {
+  border-top-color: #5f1030;
 }
 
 .faq__question {

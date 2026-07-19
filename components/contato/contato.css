@@ -10,23 +10,34 @@
 
    Follows this site's flat 12-column grid convention (24px outer
    margin, 20px gutter) already used by footer.css/portfolio-page.css/
-   sobre-page.css. The text and email sit near the bottom of an initial,
-   full-viewport-height section (see .contato__bottom below), but in
-   ordinary document flow — not fixed/sticky — so they scroll away with
-   the rest of the page like any other content. */
+   sobre-page.css. The text and email sit at the bottom of a fullscreen
+   section (see .contato__bottom below), in ordinary document flow —
+   not fixed/sticky — so a resize simply reflows them like any other
+   content, it just never needs to scroll since the page has no other
+   content below it (no Footer on this page). */
 
 body {
   margin: 0;
+  /* The whole page is exactly one viewport tall (see .contato below),
+     so nothing should ever need to scroll — this is a defensive
+     backstop against a stray sub-pixel rounding difference producing
+     a 1px scrollbar, not something expected to ever actually clip
+     real content. */
+  overflow: hidden;
 }
 
-/* min-height: 100vh + a bottom-anchored flex column is what makes the
-   *initial* (unscrolled) layout land the email 40px above the viewport
-   bottom and the text 80px above that, without pinning anything to the
-   viewport: .contato is simply tall enough on load that its own last
-   child sits at that spot through normal flow, and it scrolls away
-   exactly like the rest of the page once the user scrolls. */
+/* Exactly one viewport tall (not min-height) — this page has no
+   Footer, so .contato is the entire page, and "fit exactly within the
+   viewport height with no scrolling" means it can't be allowed to grow
+   past 100vh the way min-height would allow. height + dvh (rather than
+   vh alone) is the same progressive-enhancement pairing used elsewhere
+   on the site (e.g. .sobre-page-header) for viewport units that
+   account for mobile browser chrome. justify-content: flex-end still
+   lands the email 40px above the bottom of that fixed-height box and
+   the text 80px above it, exactly as before. */
 .contato {
-  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh;
   box-sizing: border-box;
   width: 100%;
   display: flex;
