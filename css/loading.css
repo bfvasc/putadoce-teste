@@ -12,13 +12,16 @@
         squares, 12px radius, 20px gap).
      3. .is-final            — the row shrinks and moves down to its
         resting position near the bottom of the viewport (node
-        150:3493: 80px squares, same 12px radius/20px gap). .is-selected
-        is added in the very same tick (not a later one — see
-        loading.js) so image-cake-1's selected-state border + shadow
-        and the #87CAD1 circle reveal (node 151:3525, .loading-circle
-        below) both start at the exact instant the row starts settling
-        into place, all three reading as one simultaneous event rather
-        than a chain of sequential ones.
+        150:3493: 80px squares, same 12px radius/20px gap). Once that
+        settle transition actually finishes (loading.js listens for
+        its transitionend, not a second hardcoded delay, so this can
+        never drift out of sync with --loading-settle-duration below),
+        .is-selected is added — a single shared trigger for both
+        image-cake-1's selected-state border + shadow AND the start of
+        the #87CAD1 circle reveal (node 151:3525, .loading-circle
+        below), so the two can't fire independently of each other.
+        The circle only ever starts growing after the thumbnails have
+        fully arrived, never before or during their movement.
 
    Every thumbnail is `position: fixed; left: 50%; top: 50%;` — a
    constant anchor for the whole sequence — with a per-item `--dx`/
@@ -43,20 +46,21 @@
   --loading-spread-duration: 500ms; /* stage 1 -> 2: spreading into a row */
   --loading-row-hold: 250ms; /* stage 2: pause on the row before it settles */
   --loading-settle-duration: 500ms; /* stage 2 -> 3: shrinking + moving to final position */
-  --loading-select-duration: 250ms; /* image-cake-1's selected state fading in, starting alongside the settle */
+  --loading-select-duration: 250ms; /* image-cake-1's selected state fading in, once the settle transition ends */
   --loading-easing: cubic-bezier(0.65, 0, 0.35, 1);
-  /* Total: 350 + 500 + 250 + 500 = 1600ms (~1.6s) — the select and
-     circle-reveal durations both run concurrently with the final
-     500ms settle above rather than adding to the total, since all
-     three start together (see loading.js). Inside the requested
-     1.5-2s window for the thumbnail sequence. */
+  /* Thumbnail sequence total: 350 + 500 + 250 + 500 = 1600ms (~1.6s),
+     inside the requested 1.5-2s window — this is the point at which
+     the thumbnails have fully arrived and .is-selected fires (see
+     loading.js, which confirms this via the settle transition's own
+     transitionend rather than trusting this number alone). */
 
-  /* #87CAD1 circular reveal (Figma node 151:3525) — starts the instant
-     the row begins settling into its final position (same tick as
-     --loading-settle-duration/--loading-select-duration above), not
-     after. Kept well under 1s on its own so the color feels like an
-     instant consequence of the selection rather than its own separate
-     beat. */
+  /* #87CAD1 circular reveal (Figma node 151:3525) — starts only once
+     the settle transition above has actually finished and the row has
+     fully arrived at its resting position (loading.js adds
+     .is-selected then, which is what css/loading.css keys the circle
+     off below), never before or during that movement. Kept well under
+     1s on its own so the color still feels like an instant consequence
+     of the selection once it does start. */
   --circle-reveal-duration: 600ms;
   --circle-reveal-color: #87cad1;
 
@@ -200,9 +204,9 @@ body {
 }
 
 /* ---- Selected state (node 150:3493, image-cake-1 only) ----
-   4px solid white border + a soft drop shadow, starting the instant
-   stage 3 begins settling (not once it finishes) — only ever applied
-   to the first thumbnail. */
+   4px solid white border + a soft drop shadow, starting once stage 3's
+   settle transition has actually finished (not while it's still
+   moving) — only ever applied to the first thumbnail. */
 .loading-track.is-selected .loading-item[data-item='1'] {
   border-color: #ffffff;
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
@@ -212,8 +216,10 @@ body {
    A plain circle, .loading-screen's white showing through everywhere
    outside it until it grows to cover the viewport. Sits in the DOM
    after #loadingTrack (targeted via the ~ sibling combinator off the
-   same .is-final class loading.js already toggles there) purely so
-   one script doesn't need to know about a second element — visual
+   same .is-selected class the selected-state rule above also uses —
+   not .is-final, which only marks the *start* of the settle
+   transition, well before the thumbnails have actually arrived) purely
+   so one script doesn't need to know about a second element — visual
    stacking is entirely z-index's job: 0 here vs. 1/2 on .loading-item,
    so the thumbnails stay visible on top throughout, exactly as
    required.
@@ -240,7 +246,7 @@ body {
   transition: transform var(--circle-reveal-duration) var(--loading-easing);
 }
 
-#loadingTrack.is-final ~ .loading-circle {
+#loadingTrack.is-selected ~ .loading-circle {
   transform: translate(-50%, -50%) translate(var(--item1-final-dx), var(--items-final-dy)) scale(1);
 }
 
