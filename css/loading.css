@@ -1,7 +1,12 @@
 /* Homepage opening loading animation — matches Figma nodes 115:467
    ("carrossel-cake" row stage, file kAYJnyqg4kZczqNmndvmeE), 150:3493
    (final resting position + image-cake-1's selected state), and
-   151:3525 (the #87CAD1 circular background reveal).
+   151:3525 (the #87CAD1 circular background reveal). The site header's
+   own slide-down entrance (components/nav/nav.css) is triggered once
+   this sequence's circle reveal actually finishes — its timing value
+   lives here too (--nav-slide-duration below) even though its other
+   styles live in nav.css, per this project's "one place for all
+   entrance-sequence timing" convention.
 
    Three stages, driven by loading.js toggling classes on #loadingTrack:
      1. default (no class)  — all 4 thumbnails stacked exactly on top
@@ -63,6 +68,15 @@
      of the selection once it does start. */
   --circle-reveal-duration: 600ms;
   --circle-reveal-color: #87cad1;
+
+  /* Site header (components/nav/nav.css) slide-down entrance. Not tied
+     to a setTimeout of its own — components/nav/nav.js waits for the
+     'circle-reveal:complete' event js/loading.js dispatches once the
+     circle above has actually finished growing, then this is just how
+     long that slide itself takes once triggered. Reuses --loading-easing
+     rather than a separate curve, for a consistent feel with the rest
+     of the entrance sequence. */
+  --nav-slide-duration: 500ms;
 
   /* ---- Layout: fluid, calibrated against the Figma frame's 1440px
      reference width so every value hits its exact spec size there
