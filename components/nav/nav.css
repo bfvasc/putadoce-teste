@@ -1,7 +1,9 @@
 /* Site header/nav — matches the "Nav" component in Figma node 115:436
    (file kAYJnyqg4kZczqNmndvmeE): a "Bolos" pill button on the left,
    the logo centered, and a "Menu" pill button on the right, one row,
-   fixed to the top of the viewport.
+   fixed to the top of the viewport. Responsive behavior below >=768px
+   / <768px matches nodes 151:3549 (tablet) and 151:3533 (mobile) — see
+   the breakpoint block further down for the full reasoning.
 
    NOTE on fonts: the frame specifies 'Satoshi Variable' Medium for the
    "Bolos" label specifically, but 'DM Sans' Medium for the adjacent
@@ -110,6 +112,86 @@
   flex-shrink: 0;
   width: clamp(14px, 1.389vw, 20px); /* 20 / 1440 */
   height: clamp(14px, 1.389vw, 20px);
+}
+
+/* ---- Responsive: tablet (Figma node 151:3549, 834px reference) and
+   mobile (node 151:3533, 402px reference) ----
+
+   Breakpoint: 768px. Neither Figma frame sits exactly on a round
+   number (834 and 402), so the actual threshold is a judgment call
+   within the range those two frames leave open — 768 is the
+   conventional tablet-portrait breakpoint and comfortably inside
+   (402, 834), so it satisfies both frames' spec without landing on an
+   arbitrary in-between value:
+     - >= 768px: identical to the desktop design. The 834px tablet
+       frame reuses the exact same "Nav" component as desktop (same
+       100x40 pill buttons with visible text, same 173.571x40 logo,
+       same 20px padding) — not a scaled-down desktop, literally the
+       same design. The base rules above are already fluid via
+       clamp(), which would keep shrinking these past what the frame
+       actually shows at 834px, so this layer pins every value back to
+       its literal desktop spec for the whole >=768px range (a no-op
+       at >=1440px, where the base clamp() already resolves to the
+       same numbers — hence "desktop stays pixel-identical").
+     - < 768px: the frame's own "Nav-Mobile" component, a genuinely
+       different design (confirmed via Figma's own distinct component
+       name) — not the desktop pill shrunk further. Buttons become
+       fixed 40x40 circles containing only the icon (the text label is
+       hidden, not removed from the DOM, so nav.html stays the single
+       shared markup for every breakpoint); the logo and nav padding
+       stay at their full-size values unscaled, matching the frame. */
+@media (min-width: 768px) {
+  .nav {
+    padding: 20px;
+  }
+
+  .nav__logo {
+    height: 40px;
+  }
+
+  .nav__button {
+    gap: 8px;
+    height: 40px;
+    padding-inline: 16px;
+  }
+
+  .nav__button-label {
+    font-size: 16px;
+  }
+
+  .nav__button-icon {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+@media (max-width: 767px) {
+  .nav {
+    padding: 20px;
+  }
+
+  .nav__logo {
+    height: 40px;
+  }
+
+  /* Explicit width (unlike the desktop/tablet button, which
+     shrink-wraps its content) since this button no longer has a text
+     label to size itself around — the frame's own fixed 40x40 square
+     needs setting directly. */
+  .nav__button {
+    width: 40px;
+    height: 40px;
+    padding-inline: 0;
+  }
+
+  .nav__button-label {
+    display: none;
+  }
+
+  .nav__button-icon {
+    width: 20px;
+    height: 20px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
