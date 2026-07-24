@@ -1,0 +1,176 @@
+/* Homepage opening loading animation — matches Figma nodes 115:467
+   ("carrossel-cake" row stage, file kAYJnyqg4kZczqNmndvmeE) and
+   150:3493 (final resting position + image-cake-1's selected state).
+
+   Three stages, driven by loading.js toggling classes on #loadingTrack:
+     1. default (no class)  — all 4 thumbnails stacked exactly on top
+        of each other, centered on screen, at the row's own 120px
+        reference size.
+     2. .is-row             — thumbnails spread into a single evenly
+        spaced row, still vertically centered (node 115:467: 120px
+        squares, 12px radius, 20px gap).
+     3. .is-final            — the row shrinks and moves down to its
+        resting position near the bottom of the viewport (node
+        150:3493: 80px squares, same 12px radius/20px gap), then
+        .is-selected is added so image-cake-1 gets its selected-state
+        border + shadow (also from node 150:3493).
+
+   Every thumbnail is `position: fixed; left: 50%; top: 50%;` — a
+   constant anchor for the whole sequence — with a per-item `--dx`/
+   `--dy` translate offset and a shared `--size` doing all the actual
+   stage-to-stage movement/scaling via `transform`/`width`/`height`.
+   Transitioning those (rather than swapping between different CSS
+   positioning schemes, e.g. position:absolute -> flow layout) is what
+   lets a plain CSS `transition` interpolate every stage smoothly:
+   the browser only ever needs to tween one transform/size, never
+   switch layout modes mid-animation. */
+
+:root {
+  /* ---- Timing: the only place these need to change ----
+     loading.js reads these same custom properties (via
+     getComputedStyle) to schedule its stage transitions, so adjusting
+     a value here updates both the CSS transition duration and the JS
+     timing in one edit — nothing is duplicated in the JS file itself. */
+  --loading-stack-hold: 350ms; /* stage 1: pause on the stacked thumbnails before spreading */
+  --loading-spread-duration: 500ms; /* stage 1 -> 2: spreading into a row */
+  --loading-row-hold: 250ms; /* stage 2: pause on the row before it settles */
+  --loading-settle-duration: 500ms; /* stage 2 -> 3: shrinking + moving to final position */
+  --loading-select-duration: 250ms; /* stage 3 -> image-cake-1's selected state fading in */
+  --loading-easing: cubic-bezier(0.65, 0, 0.35, 1);
+  /* Total: 350 + 500 + 250 + 500 + 250 = 1850ms (~1.85s), inside the
+     requested 1.5-2s window. */
+
+  /* ---- Layout: fluid, calibrated against the Figma frame's 1440px
+     reference width so every value hits its exact spec size there
+     (120px/80px thumbnails, 20px gap) and scales down proportionally
+     on narrower viewports, floored so nothing gets illegibly small.
+     Border/shadow on the selected state stay fixed-size (see below)
+     since only "thumbnail size and spacing" was asked to scale. ----*/
+  --thumb-size-row: clamp(48px, 8.333vw, 120px); /* 120 / 1440 */
+  --thumb-size-final: clamp(32px, 5.556vw, 80px); /* 80 / 1440 */
+  --thumb-gap: clamp(8px, 1.389vw, 20px); /* 20 / 1440 */
+  --thumb-radius: 12px;
+  --final-bottom-margin: clamp(16px, 2.778vw, 40px); /* 40 / 1440 */
+}
+
+body {
+  margin: 0;
+  /* Nothing on the page can scroll during/after this stage — every
+     thumbnail is position: fixed and there's no other content yet. */
+  overflow: hidden;
+  background-color: #ffffff;
+}
+
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  background-color: #ffffff;
+}
+
+.loading-item {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  box-sizing: border-box;
+  width: var(--thumb-size-row);
+  height: var(--thumb-size-row);
+  border-radius: var(--thumb-radius);
+  overflow: hidden;
+  /* Reserves the selected state's border footprint from the start
+     (transparent, so invisible) so box-sizing: border-box never has
+     to change the item's outer size when the real white border
+     appears later — only its color needs to transition. */
+  border: 4px solid transparent;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0);
+  --dx: 0px;
+  --dy: 0px;
+  transform: translate(-50%, -50%) translate(var(--dx), var(--dy));
+  transition:
+    width var(--loading-settle-duration) var(--loading-easing),
+    height var(--loading-settle-duration) var(--loading-easing),
+    transform var(--loading-settle-duration) var(--loading-easing),
+    border-color var(--loading-select-duration) ease,
+    box-shadow var(--loading-select-duration) ease;
+}
+
+/* image-cake-1 stays on top of the pile during stage 1's stack, since
+   it's the same thumbnail that ends up selected at the end. */
+.loading-item[data-item='1'] {
+  z-index: 2;
+}
+
+.loading-item__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ---- Stage 2: spread into a row (node 115:467) ----
+   Each item's --dx places it in an evenly spaced row of 4 centered on
+   the anchor point: offsets are (index - 1.5) * (size + gap), i.e.
+   -1.5, -0.5, 0.5, 1.5 row-widths from center — the same math as the
+   frame's own 140px item-to-item spacing (120px + 20px gap) at the
+   1440px reference. */
+.loading-track.is-row .loading-item {
+  width: var(--thumb-size-row);
+  height: var(--thumb-size-row);
+  transition-duration: var(--loading-spread-duration);
+}
+
+.loading-track.is-row .loading-item[data-item='1'] {
+  --dx: calc((var(--thumb-size-row) + var(--thumb-gap)) * -1.5);
+}
+.loading-track.is-row .loading-item[data-item='2'] {
+  --dx: calc((var(--thumb-size-row) + var(--thumb-gap)) * -0.5);
+}
+.loading-track.is-row .loading-item[data-item='3'] {
+  --dx: calc((var(--thumb-size-row) + var(--thumb-gap)) * 0.5);
+}
+.loading-track.is-row .loading-item[data-item='4'] {
+  --dx: calc((var(--thumb-size-row) + var(--thumb-gap)) * 1.5);
+}
+
+/* ---- Stage 3: shrink + settle near the bottom (node 150:3493) ----
+   --dy moves each item's center from the viewport's vertical center
+   down to (viewport height - bottom margin - half the final thumbnail
+   size) — i.e. exactly --final-bottom-margin above the viewport's
+   bottom edge. */
+.loading-track.is-final .loading-item {
+  width: var(--thumb-size-final);
+  height: var(--thumb-size-final);
+  transition-duration: var(--loading-settle-duration);
+  --dy: calc(50vh - var(--final-bottom-margin) - var(--thumb-size-final) / 2);
+}
+
+.loading-track.is-final .loading-item[data-item='1'] {
+  --dx: calc((var(--thumb-size-final) + var(--thumb-gap)) * -1.5);
+}
+.loading-track.is-final .loading-item[data-item='2'] {
+  --dx: calc((var(--thumb-size-final) + var(--thumb-gap)) * -0.5);
+}
+.loading-track.is-final .loading-item[data-item='3'] {
+  --dx: calc((var(--thumb-size-final) + var(--thumb-gap)) * 0.5);
+}
+.loading-track.is-final .loading-item[data-item='4'] {
+  --dx: calc((var(--thumb-size-final) + var(--thumb-gap)) * 1.5);
+}
+
+/* ---- Selected state (node 150:3493, image-cake-1 only) ----
+   4px solid white border + a soft drop shadow, both fading in once
+   stage 3 has settled — only ever applied to the first thumbnail. */
+.loading-track.is-selected .loading-item[data-item='1'] {
+  border-color: #ffffff;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+/* Users who've asked for less motion get the finished state straight
+   away — loading.js also checks this directly and skips its timers
+   entirely, but the CSS override is a belt-and-suspenders fallback
+   (e.g. if JS is slow to run) so nothing ever visibly animates. */
+@media (prefers-reduced-motion: reduce) {
+  .loading-item {
+    transition: none;
+  }
+}
