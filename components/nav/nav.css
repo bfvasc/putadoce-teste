@@ -20,8 +20,12 @@
    former per this task's requirement to keep header timing alongside
    the existing loading-sequence values, the latter reused for a
    consistent feel with the rest of the entrance sequence rather than
-   introducing a near-duplicate easing curve. Both stylesheets need to
-   be loaded on any page using this component. */
+   introducing a near-duplicate easing curve. The buttons' shared
+   border/fill/hover/focus skin lives in css/buttons.css's
+   .btn-outline (applied to both buttons in nav.html) rather than here,
+   since that treatment isn't nav-specific — see that file for why. All
+   three stylesheets need to be loaded on any page using this
+   component. */
 
 .nav {
   position: fixed;
@@ -59,7 +63,11 @@
   width: auto;
 }
 
-/* Deliberately no explicit width here (unlike the frame's own literal
+/* Border/fill/hover/focus come from .btn-outline (css/buttons.css),
+   applied alongside this class in nav.html. Only this component's own
+   sizing/layout lives here.
+
+   Deliberately no explicit width (unlike the frame's own literal
    100px spec): the button instead shrink-wraps its own content
    (padding + icon + gap + text, all fluid below), which reproduces
    ~100px at the 1440px reference on its own and — critically — can
@@ -67,31 +75,10 @@
    independently-scaled fixed width risked doing, since the button is
    always exactly as wide as its own (floored) content actually needs. */
 .nav__button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   flex-shrink: 0;
   gap: clamp(4px, 0.556vw, 8px); /* 8 / 1440 */
   height: clamp(32px, 2.778vw, 40px); /* 40 / 1440 */
   padding-inline: clamp(10px, 1.111vw, 16px); /* 16 / 1440 */
-  border: 1.5px solid #ff2b00;
-  border-radius: 360px;
-  background-color: #ffffff;
-  cursor: pointer;
-  transition: background-color 0.18s ease;
-}
-
-/* Not specified by the frame ("visual only for now... give them a
-   subtle hover state") — a light tint of the button's own accent
-   color, consistent with the palette already present on this
-   component rather than an unrelated color. */
-.nav__button:hover {
-  background-color: rgba(255, 43, 0, 0.08);
-}
-
-.nav__button:focus-visible {
-  outline: 2px solid #ff2b00;
-  outline-offset: 2px;
 }
 
 .nav__button-label {
@@ -103,7 +90,8 @@
      expressed as em so it holds the same ratio across the fluid
      clamp() above instead of only matching at exactly 16px. */
   letter-spacing: -0.02em;
-  color: #ff2b00;
+  /* Red text comes from .btn-outline's own color, inherited here —
+     not re-declared, so there's only one place that value lives. */
   white-space: nowrap;
 }
 
