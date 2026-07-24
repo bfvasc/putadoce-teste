@@ -1,0 +1,43 @@
+/* Shared "red-outline / white-fill" pill button treatment — used by
+   the nav header's Bolos/Menu buttons (components/nav/nav.css) today,
+   and meant for any future button styled the same way: this is the
+   site's standard secondary/pill button skin, not something specific
+   to the nav.
+
+   Lives in css/ (site-wide styles) rather than inside
+   components/nav/nav.css, since nothing about it is nav-specific —
+   any component can opt into the exact same look (and the exact same
+   hover) just by adding this class, with no risk of the two drifting
+   apart the way two separately-maintained copies of the same rule
+   could. Any page using a button with this class needs to load this
+   stylesheet.
+
+   Only the "skin" lives here — border, fill, text color, content
+   centering, hover, focus. Size and spacing (height, padding, gap,
+   icon layout) stay with whichever component uses it, since those
+   vary per button's own content and aren't part of the shared look. */
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid #ff2b00;
+  border-radius: 360px;
+  background-color: #ffffff;
+  color: #ff2b00;
+  cursor: pointer;
+  transition: background-color 0.18s ease;
+}
+
+/* Light pink fill on hover — border and text both stay red purely by
+   NOT being touched here (border-color and color are untouched, so
+   they simply hold their resting-state values); any icons inside are
+   pre-colored SVG files rather than currentColor-based, so they were
+   never going to change on hover regardless. */
+.btn-outline:hover {
+  background-color: #fee7f6;
+}
+
+.btn-outline:focus-visible {
+  outline: 2px solid #ff2b00;
+  outline-offset: 2px;
+}
