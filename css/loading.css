@@ -1,6 +1,7 @@
 /* Homepage opening loading animation — matches Figma nodes 115:467
-   ("carrossel-cake" row stage, file kAYJnyqg4kZczqNmndvmeE) and
-   150:3493 (final resting position + image-cake-1's selected state).
+   ("carrossel-cake" row stage, file kAYJnyqg4kZczqNmndvmeE), 150:3493
+   (final resting position + image-cake-1's selected state), and
+   151:3525 (the #87CAD1 circular background reveal).
 
    Three stages, driven by loading.js toggling classes on #loadingTrack:
      1. default (no class)  — all 4 thumbnails stacked exactly on top
@@ -11,9 +12,13 @@
         squares, 12px radius, 20px gap).
      3. .is-final            — the row shrinks and moves down to its
         resting position near the bottom of the viewport (node
-        150:3493: 80px squares, same 12px radius/20px gap), then
-        .is-selected is added so image-cake-1 gets its selected-state
-        border + shadow (also from node 150:3493).
+        150:3493: 80px squares, same 12px radius/20px gap). .is-selected
+        is added in the very same tick (not a later one — see
+        loading.js) so image-cake-1's selected-state border + shadow
+        and the #87CAD1 circle reveal (node 151:3525, .loading-circle
+        below) both start at the exact instant the row starts settling
+        into place, all three reading as one simultaneous event rather
+        than a chain of sequential ones.
 
    Every thumbnail is `position: fixed; left: 50%; top: 50%;` — a
    constant anchor for the whole sequence — with a per-item `--dx`/
@@ -23,7 +28,10 @@
    positioning schemes, e.g. position:absolute -> flow layout) is what
    lets a plain CSS `transition` interpolate every stage smoothly:
    the browser only ever needs to tween one transform/size, never
-   switch layout modes mid-animation. */
+   switch layout modes mid-animation. .loading-circle reuses that same
+   --dx/--dy math (see --item1-final-dx/--items-final-dy) for its own
+   origin point, rather than a separate hardcoded position, so it's
+   always centered on image-cake-1's actual final position. */
 
 :root {
   /* ---- Timing: the only place these need to change ----
@@ -35,10 +43,22 @@
   --loading-spread-duration: 500ms; /* stage 1 -> 2: spreading into a row */
   --loading-row-hold: 250ms; /* stage 2: pause on the row before it settles */
   --loading-settle-duration: 500ms; /* stage 2 -> 3: shrinking + moving to final position */
-  --loading-select-duration: 250ms; /* stage 3 -> image-cake-1's selected state fading in */
+  --loading-select-duration: 250ms; /* image-cake-1's selected state fading in, starting alongside the settle */
   --loading-easing: cubic-bezier(0.65, 0, 0.35, 1);
-  /* Total: 350 + 500 + 250 + 500 + 250 = 1850ms (~1.85s), inside the
-     requested 1.5-2s window. */
+  /* Total: 350 + 500 + 250 + 500 = 1600ms (~1.6s) — the select and
+     circle-reveal durations both run concurrently with the final
+     500ms settle above rather than adding to the total, since all
+     three start together (see loading.js). Inside the requested
+     1.5-2s window for the thumbnail sequence. */
+
+  /* #87CAD1 circular reveal (Figma node 151:3525) — starts the instant
+     the row begins settling into its final position (same tick as
+     --loading-settle-duration/--loading-select-duration above), not
+     after. Kept well under 1s on its own so the color feels like an
+     instant consequence of the selection rather than its own separate
+     beat. */
+  --circle-reveal-duration: 600ms;
+  --circle-reveal-color: #87cad1;
 
   /* ---- Layout: fluid, calibrated against the Figma frame's 1440px
      reference width so every value hits its exact spec size there
@@ -51,6 +71,28 @@
   --thumb-gap: clamp(8px, 1.389vw, 20px); /* 20 / 1440 */
   --thumb-radius: 12px;
   --final-bottom-margin: clamp(16px, 2.778vw, 40px); /* 40 / 1440 */
+
+  /* image-cake-1's final center point, as an offset from the viewport
+     center (50vw, 50vh) — the exact same formula stage 3 already uses
+     for the thumbnail itself (see .loading-track.is-final rules
+     below), hoisted here so .loading-circle's origin can reference the
+     identical values instead of a second, potentially-drifting copy.
+     --items-final-dy is shared by all 4 thumbnails in stage 3 (they're
+     all in one horizontal row), so it doubles as image-cake-1's own
+     final vertical offset. */
+  --item1-final-dx: calc((var(--thumb-size-final) + var(--thumb-gap)) * -1.5);
+  --items-final-dy: calc(50vh - var(--final-bottom-margin) - var(--thumb-size-final) / 2);
+
+  /* Diameter the circle must reach to cover the viewport with no gaps
+     at any corner, from ANY origin point on screen: the true
+     requirement is 2x the distance from the origin to the single
+     farthest corner, but 2 * (100vw + 100vh) is a simple, safe upper
+     bound for that (vw + vh is always >= the viewport's own diagonal,
+     by the triangle inequality) without needing sqrt()/pow() in
+     calc(), which is still uneven browser support for a static site
+     like this one. The excess is invisible either way, since anything
+     past the viewport edge is clipped by it. */
+  --circle-max-diameter: calc(2 * (100vw + 100vh));
 }
 
 body {
@@ -141,11 +183,11 @@ body {
   width: var(--thumb-size-final);
   height: var(--thumb-size-final);
   transition-duration: var(--loading-settle-duration);
-  --dy: calc(50vh - var(--final-bottom-margin) - var(--thumb-size-final) / 2);
+  --dy: var(--items-final-dy);
 }
 
 .loading-track.is-final .loading-item[data-item='1'] {
-  --dx: calc((var(--thumb-size-final) + var(--thumb-gap)) * -1.5);
+  --dx: var(--item1-final-dx);
 }
 .loading-track.is-final .loading-item[data-item='2'] {
   --dx: calc((var(--thumb-size-final) + var(--thumb-gap)) * -0.5);
@@ -158,11 +200,48 @@ body {
 }
 
 /* ---- Selected state (node 150:3493, image-cake-1 only) ----
-   4px solid white border + a soft drop shadow, both fading in once
-   stage 3 has settled — only ever applied to the first thumbnail. */
+   4px solid white border + a soft drop shadow, starting the instant
+   stage 3 begins settling (not once it finishes) — only ever applied
+   to the first thumbnail. */
 .loading-track.is-selected .loading-item[data-item='1'] {
   border-color: #ffffff;
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+/* ---- Circular background reveal (node 151:3525) ----
+   A plain circle, .loading-screen's white showing through everywhere
+   outside it until it grows to cover the viewport. Sits in the DOM
+   after #loadingTrack (targeted via the ~ sibling combinator off the
+   same .is-final class loading.js already toggles there) purely so
+   one script doesn't need to know about a second element — visual
+   stacking is entirely z-index's job: 0 here vs. 1/2 on .loading-item,
+   so the thumbnails stay visible on top throughout, exactly as
+   required.
+
+   Positioned with the same fixed left/top: 50% anchor + translate
+   pattern as .loading-item, translated to image-cake-1's actual final
+   center (--item1-final-dx/--items-final-dy — the same custom
+   properties stage 3 itself uses, not a separate hardcoded position),
+   then scaled from 0 to 1 at a diameter guaranteed to cover the
+   viewport from that point with no corner gaps (--circle-max-diameter
+   above). Scaling a circle from its own center is precisely a
+   "grow outward from a point" reveal — scale is also cheaper for the
+   browser to animate than transitioning width/height directly. */
+.loading-circle {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 0;
+  width: var(--circle-max-diameter);
+  height: var(--circle-max-diameter);
+  border-radius: 50%;
+  background-color: var(--circle-reveal-color);
+  transform: translate(-50%, -50%) translate(var(--item1-final-dx), var(--items-final-dy)) scale(0);
+  transition: transform var(--circle-reveal-duration) var(--loading-easing);
+}
+
+#loadingTrack.is-final ~ .loading-circle {
+  transform: translate(-50%, -50%) translate(var(--item1-final-dx), var(--items-final-dy)) scale(1);
 }
 
 /* Users who've asked for less motion get the finished state straight
@@ -170,7 +249,8 @@ body {
    entirely, but the CSS override is a belt-and-suspenders fallback
    (e.g. if JS is slow to run) so nothing ever visibly animates. */
 @media (prefers-reduced-motion: reduce) {
-  .loading-item {
+  .loading-item,
+  .loading-circle {
     transition: none;
   }
 }
