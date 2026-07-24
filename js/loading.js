@@ -16,8 +16,7 @@
   var TIMING = {
     stackHold: readMs('--loading-stack-hold'), // stage 1: stacked, before spreading
     spreadDuration: readMs('--loading-spread-duration'), // stage 1 -> 2
-    rowHold: readMs('--loading-row-hold'), // stage 2: row, before settling
-    settleDuration: readMs('--loading-settle-duration') // stage 2 -> 3
+    rowHold: readMs('--loading-row-hold') // stage 2: row, before settling
   };
 
   function showFinalStateImmediately() {
@@ -40,14 +39,15 @@
       track.classList.add('is-row');
     }, t);
 
+    // is-final (thumbnails settle into place), is-selected
+    // (image-cake-1's border/shadow), and the #87CAD1 circle reveal
+    // (css/loading.css keys the circle off this same is-final class)
+    // all start in this one tick — three simultaneous events, not a
+    // fourth step chained after the others finish.
     t += TIMING.spreadDuration + TIMING.rowHold;
     setTimeout(function () {
       track.classList.remove('is-row');
       track.classList.add('is-final');
-    }, t);
-
-    t += TIMING.settleDuration;
-    setTimeout(function () {
       track.classList.add('is-selected');
     }, t);
   }
