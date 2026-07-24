@@ -17,18 +17,26 @@
     stackHold: readMs('--loading-stack-hold'), // stage 1: stacked, before spreading
     spreadDuration: readMs('--loading-spread-duration'), // stage 1 -> 2
     rowHold: readMs('--loading-row-hold'), // stage 2: row, before settling
-    settleDuration: readMs('--loading-settle-duration') // stage 2 -> 3, used below as the fallback's deadline
+    settleDuration: readMs('--loading-settle-duration'), // stage 2 -> 3, used below as the fallback's deadline
+    circleRevealDuration: readMs('--circle-reveal-duration') // circle grow, used below as its fallback's deadline
   };
 
-  // Padding added on top of --loading-settle-duration for the
-  // transitionend fallback below — just enough to absorb normal
-  // scheduling jitter without meaningfully delaying the sequence if
-  // the real event never arrives.
-  var SETTLE_FALLBACK_BUFFER_MS = 100;
+  // Padding added on top of a stage's own transition duration for its
+  // transitionend fallback — just enough to absorb normal scheduling
+  // jitter without meaningfully delaying the sequence if the real
+  // event never arrives. Shared by both fallbacks below.
+  var TRANSITION_FALLBACK_BUFFER_MS = 100;
 
+  // 'circle-reveal:complete' is what components/nav/nav.js listens for
+  // to know when the header may slide into place — dispatched once
+  // here, in showFinalStateImmediately() below, so that path (reduced
+  // motion or a JS-slow first paint) also reaches any listener rather
+  // than leaving the header waiting forever for a signal only the
+  // normal play() path would otherwise send.
   function showFinalStateImmediately() {
     track.classList.add('is-final');
     track.classList.add('is-selected');
+    document.dispatchEvent(new CustomEvent('circle-reveal:complete'));
   }
 
   // prefers-reduced-motion: skip straight to the finished layout — no
@@ -74,6 +82,7 @@
         item1.removeEventListener('transitionend', onTransitionEnd);
       }
       track.classList.add('is-selected');
+      triggerNavAfterCircleReveal();
     }
 
     function onTransitionEnd(event) {
@@ -86,7 +95,47 @@
       item1.addEventListener('transitionend', onTransitionEnd);
     }
 
-    fallbackTimer = setTimeout(fire, TIMING.settleDuration + SETTLE_FALLBACK_BUFFER_MS);
+    fallbackTimer = setTimeout(fire, TIMING.settleDuration + TRANSITION_FALLBACK_BUFFER_MS);
+  }
+
+  // Same transitionend-with-fallback pattern as
+  // triggerSelectedStateAfterSettle() above, applied to the circle
+  // itself: components/nav/nav.js needs to know once the #87CAD1
+  // circle has actually finished growing (not merely started, which is
+  // when .is-selected above gets added), so the header only starts
+  // sliding down after the reveal is visually complete. Dispatching a
+  // real event — rather than nav.js/loading.js sharing a hardcoded
+  // delay that could drift out of sync if --circle-reveal-duration
+  // ever changes — is what this task calls "reuse the existing
+  // event-based trigger approach."
+  function triggerNavAfterCircleReveal() {
+    var circle = document.querySelector('.loading-circle');
+    var fired = false;
+    var fallbackTimer;
+
+    function fire() {
+      if (fired) {
+        return;
+      }
+      fired = true;
+      clearTimeout(fallbackTimer);
+      if (circle) {
+        circle.removeEventListener('transitionend', onTransitionEnd);
+      }
+      document.dispatchEvent(new CustomEvent('circle-reveal:complete'));
+    }
+
+    function onTransitionEnd(event) {
+      if (event.propertyName === 'transform') {
+        fire();
+      }
+    }
+
+    if (circle) {
+      circle.addEventListener('transitionend', onTransitionEnd);
+    }
+
+    fallbackTimer = setTimeout(fire, TIMING.circleRevealDuration + TRANSITION_FALLBACK_BUFFER_MS);
   }
 
   function play() {
