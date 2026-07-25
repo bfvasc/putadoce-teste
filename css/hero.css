@@ -31,9 +31,6 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* 20px at the 1440px reference (1.389vw) between the cake/text row
-     and the button below, matching Figma's own 600 -> 620 gap. */
-  gap: clamp(10px, 1.389vw, 20px);
   /* Keeps content clear of the fixed header and the thumbnail row
      without hardcoding a second copy of either one's height: reuses
      the exact formulas those already scale by (nav.css's own
@@ -137,10 +134,31 @@
 }
 
 .hero__cta {
-  /* 56px at the 1440px reference (3.889vw). */
+  /* Taken out of .hero's centered flex flow and anchored directly to
+     the thumbnail row instead — Figma's button position isn't "the
+     cluster+button centered as one block" (that only approximates the
+     real numbers), it's the cake/text cluster centered on its own
+     with the button pinned a fixed 24px above the thumbnails. Reuses
+     the same --final-bottom-margin/--thumb-size-final formula as
+     .hero's own padding-bottom so this can't drift out of sync with
+     where the thumbnail row actually starts. */
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--final-bottom-margin) + var(--thumb-size-final) + 24px);
+  /* Combines horizontal centering with .hero__reveal's own initial
+     vertical reveal offset — a single element can only have one
+     `transform`, so this can't be split across the two classes. */
+  transform: translate(-50%, 10px);
+  /* 56px at the 1440px reference (3.889vw); pinned to the literal
+     56/24/8/16/20px spec for the >=768px desktop range below, same as
+     components/nav/nav.css does for its own buttons. */
   height: clamp(40px, 3.889vw, 56px);
   gap: clamp(4px, 0.556vw, 8px); /* 8 / 1440, same ratio as the nav buttons */
   padding-inline: clamp(14px, 1.667vw, 24px); /* 24 / 1440 */
+}
+
+.hero__cta.is-visible {
+  transform: translate(-50%, 0);
 }
 
 .hero__cta-label {
@@ -158,6 +176,29 @@
   flex-shrink: 0;
   width: clamp(14px, 1.389vw, 20px); /* 20 / 1440, same ratio as the nav buttons' icons */
   height: clamp(14px, 1.389vw, 20px);
+}
+
+/* ---- Responsive: >=768px (matching components/nav/nav.css's own
+   breakpoint) pins the CTA to its literal desktop spec, the same way
+   nav.css pins its own buttons — the clamp() above already resolves
+   to these exact numbers at the 1440px reference, but was otherwise
+   still scaling down below that, undershooting the spec at common
+   in-between desktop widths (e.g. 1280-1728px laptop screens). ---- */
+@media (min-width: 768px) {
+  .hero__cta {
+    height: 56px;
+    gap: 8px;
+    padding-inline: 24px;
+  }
+
+  .hero__cta-label {
+    font-size: 16px;
+  }
+
+  .hero__cta-icon {
+    width: 20px;
+    height: 20px;
+  }
 }
 
 /* ---- Responsive: below 768px (matching components/nav/nav.css's own
