@@ -304,6 +304,35 @@
 @media (max-width: 767px) {
   .hero {
     padding-inline: clamp(16px, 4.975vw, 20px); /* 20 / 402 */
+
+    /* ---- Precise top/bottom boundaries for centering, mobile only ----
+       The shared <1024px tier above treats --hero-nav-clearance as the
+       whole top boundary and pads --hero-cta-clearance with an extra
+       +20px fudge factor -- fine for a rough tablet fallback, but
+       mobile needs the boundaries themselves to be exact: .hero__cluster
+       (the "nós amamos" / cake / "buttercream" group) is centered via
+       justify-content:center between padding-top and padding-bottom, so
+       whatever those two values are IS where it centers -- not an
+       approximation of it. */
+
+    /* >=24px of breathing room between the nav and "nós amamos",
+       on top of nav's own real height (--hero-nav-clearance, set on
+       the base rule above) -- previously the content box started
+       flush against the nav with no buffer of its own, so the actual
+       gap depended entirely on how much leftover space centering
+       happened to put above the cluster. */
+    --hero-top-clearance: calc(var(--hero-nav-clearance) + 24px);
+    padding-top: var(--hero-top-clearance);
+
+    /* Redefines the shared <1024px tier's own --hero-cta-clearance
+       without its +20px fudge: 24px clear of the viewport bottom
+       (--final-bottom-margin, now 24px on mobile -- see css/loading.css),
+       the 80px thumbnail row, a 24px gap, then the 48px button. The
+       cake's own max-height cap below is what actually guarantees no
+       button overlap now, so an extra buffer here would just eat into
+       the centered space for no reason. */
+    --hero-cta-clearance: calc(var(--final-bottom-margin) + var(--thumb-size-final) + 24px + 48px);
+    padding-bottom: var(--hero-cta-clearance);
   }
 
   .hero__text {
@@ -315,12 +344,17 @@
     max-width: 362px; /* the frame's own content-column width at 402px */
     height: auto;
     aspect-ratio: 1;
-    /* Same short-viewport safety net as the tablet band above, using
-       this band's own fluid text-size formula (font-size * 1.1
-       line-height, for both stacked text lines) instead of a flat
-       72px -- a no-op at any normal phone height, where the
-       width-driven size above already fits comfortably. */
-    max-height: calc(100vh - var(--hero-nav-clearance) - var(--hero-cta-clearance) - 2.2 * clamp(32px, 13.93vw, 56px));
+    /* Pulls the cake into the two texts either side of it (.hero__cluster's
+       own gap is already 0, from the shared <1024px tier) so they
+       overlap slightly instead of just touching -- explicitly fine per
+       this task, unlike the button, which must never be touched. */
+    margin-block: -20px;
+    /* Short-viewport safety net, using this band's own top/bottom
+       clearances (above) and fluid text-size formula (font-size * 1.1
+       line-height, for both stacked text lines) -- a no-op at any
+       normal phone height, where the width-driven size above already
+       fits comfortably. */
+    max-height: calc(100vh - var(--hero-top-clearance) - var(--hero-cta-clearance) - 2.2 * clamp(32px, 13.93vw, 56px));
   }
 }
 
