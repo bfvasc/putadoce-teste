@@ -149,12 +149,12 @@
      vertical reveal offset — a single element can only have one
      `transform`, so this can't be split across the two classes. */
   transform: translate(-50%, 10px);
-  /* 56px at the 1440px reference (3.889vw); pinned to the literal
-     56/24/8/16/20px spec for the >=768px desktop range below, same as
+  /* 48px at the 1440px reference (3.333vw); pinned to the literal
+     48/20/8/16/20px spec for the >=768px desktop range below, same as
      components/nav/nav.css does for its own buttons. */
-  height: clamp(40px, 3.889vw, 56px);
+  height: clamp(40px, 3.333vw, 48px);
   gap: clamp(4px, 0.556vw, 8px); /* 8 / 1440, same ratio as the nav buttons */
-  padding-inline: clamp(14px, 1.667vw, 24px); /* 24 / 1440 */
+  padding-inline: clamp(14px, 1.389vw, 20px); /* 20 / 1440 */
 }
 
 .hero__cta.is-visible {
@@ -186,9 +186,9 @@
    in-between desktop widths (e.g. 1280-1728px laptop screens). ---- */
 @media (min-width: 768px) {
   .hero__cta {
-    height: 56px;
+    height: 48px;
     gap: 8px;
-    padding-inline: 24px;
+    padding-inline: 20px;
   }
 
   .hero__cta-label {
