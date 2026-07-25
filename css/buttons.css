@@ -41,3 +41,41 @@
   outline: 2px solid #ff2b00;
   outline-offset: 2px;
 }
+
+/* Solid CTA pill — red fill, white text/icon. Used by the homepage
+   hero's "Pedir no Goomer" button (css/hero.css) today, and meant for
+   any future button styled the same way, same as .btn-outline above.
+
+   Unlike .btn-outline, this button's background/border/text do NOT
+   change on hover — the only hover feedback is its trailing icon
+   sliding right (.btn-solid__icon), so that transition lives here too
+   rather than being re-declared per button. */
+.btn-solid {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 360px;
+  background-color: #ff2b00;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.btn-solid:focus-visible {
+  outline: 2px solid #ff2b00;
+  outline-offset: 2px;
+}
+
+.btn-solid__icon {
+  transition: transform 0.22s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.btn-solid:hover .btn-solid__icon {
+  transform: translateX(4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-solid__icon {
+    transition: none;
+  }
+}

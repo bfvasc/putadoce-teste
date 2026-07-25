@@ -78,6 +78,24 @@
      of the entrance sequence. */
   --nav-slide-duration: 500ms;
 
+  /* Hero content (css/hero.css, Figma node 114:238) entrance timing —
+     grouped here too, per this project's "one place for all
+     entrance-sequence timing" convention, even though the hero's other
+     styles live in their own stylesheet. js/hero.js triggers off the
+     same 'circle-reveal:complete' event components/nav/nav.js already
+     listens for, never an independent timer. */
+  --hero-fall-duration: 700ms; /* the central cake dropping in from above the viewport into its resting spot */
+  /* A small overshoot on landing rather than a plain settle — per the
+     apple-design skill, bounce is only earned when the motion itself
+     carries real momentum (here, a drop/fall), unlike a plain
+     fade/appear where a critically-damped curve (no overshoot) is the
+     right default. */
+  --hero-fall-easing: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --hero-details-duration: 350ms; /* the two side texts + button fading/rising in, right after the cake settles */
+  --hero-details-easing: var(--loading-easing); /* reuses the site's one non-bouncy "settle" curve — nothing here carries gesture momentum, so no overshoot */
+  --hero-float-duration: 4200ms; /* continuous idle float once settled — slow and subtle on purpose, never distracting */
+  --hero-float-distance: 10px; /* how far the cake drifts up on each float cycle */
+
   /* ---- Layout: fluid, calibrated against the Figma frame's 1440px
      reference width so every value hits its exact spec size there
      (120px/80px thumbnails, 20px gap) and scales down proportionally
