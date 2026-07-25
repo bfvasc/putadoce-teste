@@ -63,8 +63,12 @@
      the exact formulas those already scale by (nav.css's own
      padding + content-height math, and loading.css's
      --final-bottom-margin/--thumb-size-final) so this can never drift
-     out of sync if either one's sizing ever changes. */
-  padding-top: calc(2 * clamp(12px, 1.389vw, 20px) + clamp(32px, 2.778vw, 40px));
+     out of sync if either one's sizing ever changes. Hoisted into its
+     own custom property, unchanged in value, so the <1024px tier
+     below can reuse the exact same nav-clearance figure when working
+     out how much room is actually left for the cake (see there). */
+  --hero-nav-clearance: calc(2 * clamp(12px, 1.389vw, 20px) + clamp(32px, 2.778vw, 40px));
+  padding-top: var(--hero-nav-clearance);
   padding-bottom: calc(var(--final-bottom-margin) + var(--thumb-size-final));
   padding-inline: clamp(16px, 2.778vw, 40px);
 }
@@ -217,12 +221,29 @@
   .hero__cluster {
     flex-direction: column;
     flex-wrap: nowrap;
-    gap: 8px;
+    /* Stacked text is allowed to sit tight against the cake (even
+       overlap slightly — a little of that is fine here, unlike the
+       button below) instead of the row layout's own airy gap. */
+    gap: 0;
   }
 
   .hero__text--fixed,
   .hero__text--variable {
     text-align: center;
+  }
+
+  /* .hero__cluster is centered (justify-content:center, from the base
+     rule) within .hero's own content box — reserving extra space here
+     on top of the thumbnail clearance guarantees the centered cluster
+     can never grow tall enough to reach down into the button's own
+     24px-above-thumbnails zone (height 48px) below, regardless of
+     viewport height or how tall the stacked text+cake gets. Unlike
+     the cake/text overlap above, the button must never be touched.
+     Hoisted into its own custom property so the cake's own max-height
+     cap (in the two bands below) can reuse the identical figure. */
+  .hero {
+    --hero-cta-clearance: calc(var(--final-bottom-margin) + var(--thumb-size-final) + 24px + 48px + 20px);
+    padding-bottom: var(--hero-cta-clearance);
   }
 }
 
@@ -242,7 +263,22 @@
 
   .hero__cake {
     width: 420px;
-    height: 420px;
+    height: auto;
+    aspect-ratio: 1;
+    /* Safety net for short viewports (e.g. a tablet in landscape):
+       without this, a 420px cake plus two stacked 72px*1.1 text
+       blocks can be taller than the actual space between the header
+       and the button's reserved zone, pushing the cake/text cluster
+       down into the button despite it being centered -- something
+       that's fine for the cake/text pairing itself (see the
+       .hero__cluster comment above) but never acceptable for the
+       button. Caps the cake (and, via aspect-ratio, its width too) to
+       whatever's actually left over once the header, both text lines,
+       and the button's own reserved zone are subtracted from the
+       real viewport height, so it shrinks on short screens instead of
+       overlapping. A no-op at any normal tablet height, where 420px
+       already comfortably fits. */
+    max-height: calc(100vh - var(--hero-nav-clearance) - var(--hero-cta-clearance) - 158.4px);
   }
 }
 
@@ -270,6 +306,43 @@
     max-width: 362px; /* the frame's own content-column width at 402px */
     height: auto;
     aspect-ratio: 1;
+    /* Same short-viewport safety net as the tablet band above, using
+       this band's own fluid text-size formula (font-size * 1.1
+       line-height, for both stacked text lines) instead of a flat
+       72px -- a no-op at any normal phone height, where the
+       width-driven size above already fits comfortably. */
+    max-height: calc(100vh - var(--hero-nav-clearance) - var(--hero-cta-clearance) - 2.2 * clamp(32px, 13.93vw, 56px));
+  }
+}
+
+/* ---- Short-viewport safety net for the row layout (>=1024px): a
+   height-only query rather than a width one, so it has zero effect at
+   any normal desktop viewport height (1440x900, 1920x1080, etc. both
+   render pixel-identically to before) and only engages on unusually
+   short windows at desktop widths, where the row layout's own cake
+   could otherwise reach down into the button's reserved zone -- the
+   same reasoning as the <1024px tier's own clearance above, just
+   gated by height instead of width so it can't touch the desktop
+   widths that must stay pixel-identical. min-width:1024px keeps this
+   from double-applying underneath the <1024px tier's own (already
+   correct, text-aware) version. */
+@media (min-width: 1024px) and (max-height: 700px) {
+  .hero {
+    --hero-cta-clearance: calc(var(--final-bottom-margin) + var(--thumb-size-final) + 24px + 48px + 20px);
+    padding-bottom: var(--hero-cta-clearance);
+  }
+
+  .hero__cake {
+    /* height/aspect-ratio only here, not in the base rule above, so a
+       normal-height 1440/1920 desktop viewport never touches this
+       query at all and keeps computing its size exactly as before
+       (two independent, but numerically identical, clamp()s) --
+       switching mechanisms only where it's actually needed avoids a
+       harmless-but-real sub-pixel rounding difference between the two
+       approaches that would otherwise show up even at normal heights. */
+    height: auto;
+    aspect-ratio: 1;
+    max-height: calc(100vh - var(--hero-nav-clearance) - var(--hero-cta-clearance));
   }
 }
 
