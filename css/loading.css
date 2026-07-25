@@ -96,6 +96,25 @@
   --hero-float-duration: 4200ms; /* continuous idle float once settled — slow and subtle on purpose, never distracting */
   --hero-float-distance: 10px; /* how far the cake drifts up on each float cycle */
 
+  /* ---- Manual cake-switch transition (js/cake-switcher.js) ----
+     Deliberately its own timing family, entirely separate from the
+     page-load entrance above: a click is a discrete, deliberate
+     choice, not a gravity-driven fall, so nothing here borrows
+     --hero-fall-easing's overshoot -- apple-design skill: bounce is
+     only earned when the motion itself carries momentum, and clicking
+     a thumbnail doesn't. All three reuse --loading-easing (the site's
+     one settle curve) and differ only in duration, which is what
+     actually creates the motion hierarchy: the circle (protagonist)
+     is deliberately the longest of the three, so the cake and word
+     (both quick enough to finish at or before it) read as riding
+     along with it rather than competing for attention. */
+  --switch-circle-duration: 600ms; /* background color reveal, expanding from the clicked thumbnail -- same duration as the opening sequence's own circle-reveal-duration, for a consistent "reveal" character, but a fully independent variable so the two can still be tuned apart */
+  --switch-circle-easing: var(--loading-easing);
+  --switch-cake-duration: 200ms; /* per leg -- the current cake shrinks+fades out over this long, then the new one grows+fades in over the same duration again */
+  --switch-cake-easing: var(--loading-easing);
+  --switch-word-duration: 120ms; /* per leg -- deliberately the quickest and, being opacity-only with no movement, the most understated of the three */
+  --switch-word-easing: var(--loading-easing);
+
   /* ---- Layout: fluid, calibrated against the Figma frame's 1440px
      reference width so every value hits its exact spec size there
      (120px/80px thumbnails, 20px gap) and scales down proportionally
@@ -311,6 +330,53 @@ body {
   transform: translate(-50%, -50%) translate(var(--item1-final-dx), var(--items-final-dy)) scale(1);
 }
 
+/* ---- Manual cake-switch circle reveal (js/cake-switcher.js) ----
+   The same grow-a-circle-from-a-point technique as .loading-circle
+   above, reused rather than duplicated -- position:fixed, the same
+   --circle-max-diameter (already origin-agnostic: a safe cover-the-
+   -viewport bound from ANY starting point, not just image-cake-1's),
+   scale(0) -> scale(1). The one real difference is the origin itself:
+   .loading-circle's is a fixed CSS formula (image-cake-1's own final
+   position, correct because the opening sequence only ever reveals
+   from there), but a manual switch has to reveal from whichever
+   thumbnail was actually clicked -- a different point every time, at
+   any screen size, so js/cake-switcher.js computes it live via
+   getBoundingClientRect() and writes it into the two custom
+   properties below, in plain pixels, rather than a CSS formula.
+
+   This is a second, separate element (not a repositioned
+   .loading-circle) so the opening sequence's own element/timing is
+   never touched by a manual switch, and vice versa -- keeping the two
+   entrances clearly separate, as required. Sits right after
+   .loading-circle in the DOM so it paints on top of it (both are
+   effectively z-index 0, tied, and later wins) while a switch is
+   revealing, then commits its color to --circle-reveal-color (which
+   .loading-circle itself reads) and resets to scale(0) the instant
+   the reveal finishes, so there's never a visible seam between "the
+   new circle covers everything" and "the old one already matches
+   underneath". */
+.hero-transition-circle {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  width: var(--circle-max-diameter);
+  height: var(--circle-max-diameter);
+  border-radius: 50%;
+  --transition-origin-x: 50vw;
+  --transition-origin-y: 50vh;
+  transform: translate(var(--transition-origin-x), var(--transition-origin-y)) translate(-50%, -50%) scale(0);
+  /* Off by default -- only .is-growing (below) turns it on, so
+     resetting the origin/color/scale between switches (see the JS)
+     is itself never animated, only the deliberate grow is. */
+  transition: none;
+}
+
+.hero-transition-circle.is-growing {
+  transition: transform var(--switch-circle-duration) var(--switch-circle-easing);
+  transform: translate(var(--transition-origin-x), var(--transition-origin-y)) translate(-50%, -50%) scale(1);
+}
+
 /* Tighter thumbnail gap on mobile (Figma's 402px-reference frame) —
    thumbnail SIZE stays 80px everywhere (see --thumb-size-final
    above); only this spacing changes below the same breakpoint
@@ -395,7 +461,8 @@ body {
    (e.g. if JS is slow to run) so nothing ever visibly animates. */
 @media (prefers-reduced-motion: reduce) {
   .loading-item,
-  .loading-circle {
+  .loading-circle,
+  .hero-transition-circle {
     transition: none;
   }
 }

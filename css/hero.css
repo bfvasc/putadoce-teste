@@ -156,6 +156,47 @@
   object-fit: contain;
 }
 
+/* ---- Manual cake-switch swap (js/cake-switcher.js) ----
+   The current cake quickly shrinks + fades out, its <img> src is
+   swapped underneath once that's finished, then it grows + fades back
+   in -- a swap in place, deliberately not another fall from above:
+   the fall-in only ever plays once, for the page's own initial load
+   (js/hero.js, --hero-fall-duration/-easing, untouched by any of
+   this). .is-switching overrides that fall-in transition for as long
+   as a swap is playing, so the two never blend into each other; both
+   the "hidden" and resting states below spell out the same
+   translateY(0)+scale(...) function pair (rather than the resting
+   state relying on .is-visible's plain translateY(0) alone) so the
+   browser can interpolate scale directly between them instead of
+   falling back to matrix decomposition for a mismatched transform
+   list. js/cake-switcher.js also pauses .is-floating for the
+   duration, resuming it only once the new cake has fully grown back
+   in -- exactly the same handoff js/hero.js's own initial settle
+   already does, just re-triggered here instead of running once. */
+.hero__cake.is-switching {
+  transition:
+    transform var(--switch-cake-duration) var(--switch-cake-easing),
+    opacity var(--switch-cake-duration) var(--switch-cake-easing);
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+.hero__cake.is-switching.is-swap-hidden {
+  transform: translateY(0) scale(0.85);
+  opacity: 0;
+}
+
+/* The right-side word's own switch cross-fade -- opacity only, no
+   movement or scale, deliberately the most understated of the three
+   switch animations (see the timing comment in css/loading.css). */
+.hero__word.is-switching {
+  transition: opacity var(--switch-word-duration) var(--switch-word-easing);
+}
+
+.hero__word.is-switching.is-swap-hidden {
+  opacity: 0;
+}
+
 /* The two side texts and the "Pedir no Goomer" button share this
    reveal: hidden until js/hero.js adds .is-visible right after the
    cake settles (see the cake's transitionend listener there). */
@@ -391,7 +432,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .hero__cake,
-  .hero__reveal {
+  .hero__reveal,
+  .hero__word {
     transition: none;
   }
 
