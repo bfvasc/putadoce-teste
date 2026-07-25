@@ -1,0 +1,188 @@
+/* Homepage hero content — matches the middle section of Figma node
+   114:238 (file kAYJnyqg4kZczqNmndvmeE): the fixed "nós amamos" /
+   changing flavor word either side of a large floating cake, and a
+   single "Pedir no Goomer" button below. Sits in the same fixed
+   viewport as the loading sequence's header/thumbnails — this page
+   never scrolls (see body { overflow: hidden } in css/loading.css) —
+   between components/nav/nav.css's header and the thumbnail row that
+   js/loading.js's entrance sequence settles into.
+
+   This task only builds cake 1's content (image-cake-central-1.png +
+   "buttercream"). The three other cakes and click-to-switch behavior
+   are later tasks, which is why the per-cake image (#heroCake,
+   data-cake="1") and the swappable word (.hero__word--variable) each
+   have a single, clearly-named hook already — so a future task can
+   swap them without touching this file's layout/timing rules. The
+   "Pedir no Goomer" button is treated as permanent hero furniture: it
+   is not part of that per-cake swap.
+
+   Entrance timing lives in css/loading.css's :root, alongside the rest
+   of the site's entrance-sequence variables — see the comment there.
+   js/hero.js drives the sequence by toggling the classes below, in
+   response to the same 'circle-reveal:complete' event
+   components/nav/nav.js already listens for. */
+
+.hero {
+  position: fixed;
+  inset: 0;
+  z-index: 1; /* above .loading-screen (auto/0), below .nav (10) */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* 20px at the 1440px reference (1.389vw) between the cake/text row
+     and the button below, matching Figma's own 600 -> 620 gap. */
+  gap: clamp(10px, 1.389vw, 20px);
+  /* Keeps content clear of the fixed header and the thumbnail row
+     without hardcoding a second copy of either one's height: reuses
+     the exact formulas those already scale by (nav.css's own
+     padding + content-height math, and loading.css's
+     --final-bottom-margin/--thumb-size-final) so this can never drift
+     out of sync if either one's sizing ever changes. */
+  padding-top: calc(2 * clamp(12px, 1.389vw, 20px) + clamp(32px, 2.778vw, 40px));
+  padding-bottom: calc(var(--final-bottom-margin) + var(--thumb-size-final));
+  padding-inline: clamp(16px, 2.778vw, 40px);
+}
+
+.hero__cluster {
+  display: flex;
+  flex-wrap: wrap; /* overflow safety net at in-between viewport widths, ahead of the column breakpoint below */
+  align-items: center;
+  justify-content: center;
+  gap: clamp(8px, 1.667vw, 24px);
+  max-width: 100%;
+}
+
+.hero__text {
+  margin: 0;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  font-optical-sizing: auto;
+  color: #ffffff;
+  /* 72px at the 1440px reference (5vw), floored so it stays legible
+     down to a 320px viewport. */
+  font-size: clamp(28px, 5vw, 72px);
+  line-height: 1.1;
+  /* Figma's -2.88px tracking at 72px is a -4% ratio, expressed as em
+     so it holds across the fluid font-size above instead of only
+     matching at exactly 72px. */
+  letter-spacing: -0.04em;
+}
+
+.hero__text--fixed {
+  text-align: left;
+}
+
+.hero__text--variable {
+  text-align: right;
+}
+
+.hero__cake {
+  /* 420px at the 1440px reference (29.167vw), floored well below that
+     so the fluid text either side of it always has room to sit next
+     to it before the column breakpoint takes over. */
+  width: clamp(120px, 29.167vw, 420px);
+  height: clamp(120px, 29.167vw, 420px);
+  flex-shrink: 0;
+  transform: translateY(-120vh); /* off-screen above the viewport until js/hero.js starts the fall */
+  transition: transform var(--hero-fall-duration) var(--hero-fall-easing);
+  will-change: transform;
+}
+
+.hero__cake.is-visible {
+  transform: translateY(0);
+}
+
+.hero__cake.is-floating {
+  /* Starts exactly where the fall above leaves off (translateY(0), the
+     keyframes' own 0%/100%) so there is no visible seam between
+     settling and floating. */
+  animation: hero-float var(--hero-float-duration) ease-in-out infinite;
+}
+
+@keyframes hero-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(calc(-1 * var(--hero-float-distance)));
+  }
+}
+
+.hero__cake-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* The two side texts and the "Pedir no Goomer" button share this
+   reveal: hidden until js/hero.js adds .is-visible right after the
+   cake settles (see the cake's transitionend listener there). */
+.hero__reveal {
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity var(--hero-details-duration) var(--hero-details-easing),
+    transform var(--hero-details-duration) var(--hero-details-easing);
+}
+
+.hero__reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hero__cta {
+  /* 56px at the 1440px reference (3.889vw). */
+  height: clamp(40px, 3.889vw, 56px);
+  gap: clamp(4px, 0.556vw, 8px); /* 8 / 1440, same ratio as the nav buttons */
+  padding-inline: clamp(14px, 1.667vw, 24px); /* 24 / 1440 */
+}
+
+.hero__cta-label {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  font-optical-sizing: auto;
+  font-size: clamp(12px, 1.111vw, 16px); /* 16 / 1440, same ratio as the nav buttons */
+  line-height: 1.1;
+  letter-spacing: -0.02em; /* same -2% ratio as the nav buttons' labels */
+  white-space: nowrap;
+}
+
+.hero__cta-icon {
+  display: block;
+  flex-shrink: 0;
+  width: clamp(14px, 1.389vw, 20px); /* 20 / 1440, same ratio as the nav buttons' icons */
+  height: clamp(14px, 1.389vw, 20px);
+}
+
+/* ---- Responsive: below 768px (matching components/nav/nav.css's own
+   breakpoint), stack fixed-text / cake / variable-text / button in a
+   single centered column instead of a row. This is a functional-only
+   fallback to satisfy "no overflow from 320-1920", not a designed
+   mobile hero — a dedicated small-screen layout is a separate task. */
+@media (max-width: 767px) {
+  .hero__cluster {
+    flex-direction: column;
+  }
+
+  .hero__text--fixed,
+  .hero__text--variable {
+    text-align: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__cake,
+  .hero__reveal {
+    transition: none;
+  }
+
+  .hero__cake.is-floating {
+    animation: none;
+  }
+}

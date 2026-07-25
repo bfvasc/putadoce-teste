@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="css/loading.css" />
   <link rel="stylesheet" href="css/buttons.css" />
   <link rel="stylesheet" href="components/nav/nav.css" />
+  <link rel="stylesheet" href="css/hero.css" />
 </head>
 <body>
   <div class="loading-screen" id="loadingScreen" aria-hidden="true">
@@ -34,7 +35,31 @@
     <div class="loading-circle"></div>
   </div>
 
+  <section class="hero" id="hero">
+    <div class="hero__cluster">
+      <p class="hero__text hero__text--fixed hero__reveal">nós amamos</p>
+
+      <div class="hero__cake" id="heroCake" data-cake="1">
+        <img
+          class="hero__cake-img"
+          src="assets/images/homepage/image-cake-central-1.png"
+          alt="Bolo com buttercream azul e confetes coloridos"
+        />
+      </div>
+
+      <p class="hero__text hero__text--variable hero__reveal">
+        <span class="hero__word hero__word--variable" id="heroVariableWord">buttercream</span>
+      </p>
+    </div>
+
+    <button type="button" class="hero__cta btn-solid hero__reveal" id="heroCta">
+      <span class="hero__cta-label">Pedir no Goomer</span>
+      <img class="hero__cta-icon btn-solid__icon" src="assets/icons/icon-arrow-right.svg" alt="" />
+    </button>
+  </section>
+
   <script src="js/loading.js"></script>
+  <script src="js/hero.js"></script>
   <script src="components/nav/nav.js"></script>
 </body>
 </html>
