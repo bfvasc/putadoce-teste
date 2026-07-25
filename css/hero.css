@@ -20,7 +20,34 @@
    of the site's entrance-sequence variables — see the comment there.
    js/hero.js drives the sequence by toggling the classes below, in
    response to the same 'circle-reveal:complete' event
-   components/nav/nav.js already listens for. */
+   components/nav/nav.js already listens for.
+
+   ---- Responsive (tablet/mobile) ----
+   Base rules below (row layout, left/right text, the fluid clamp()s
+   reaching 72px/420px at the 1440px desktop reference) are the
+   original desktop-only implementation, left untouched — every
+   breakpoint override lives further down the file, layered on top, so
+   the >=1024px desktop result stays exactly what it already was.
+
+   - Tablet: Figma node 130:2178 ("Home-Tablet", 834px reference).
+     Same Nav as desktop (nav.css's own >=768px breakpoint already
+     covers this, unchanged) but the hero content stacks vertically
+     instead of sitting in a row, still at desktop's exact 72px
+     type/420px cake size.
+   - Mobile: the Figma URL's node-id (126:486) no longer resolves to
+     any node in the file (likely stale/renamed). No frame at a mobile
+     width uses this cake's actual "buttercream" text either; the
+     nearest match is the 402px-reference "Home" frame family (e.g.
+     node 127:1230), which has the identical stacked structure and
+     button spec, just demonstrating a different flavor word. Built
+     from that frame's layout with this cake's own real content.
+   - Breakpoints: >=1024px desktop, 768-1023px tablet, <768px mobile —
+     see the PR description for the full reasoning. 768px reuses
+     nav.css's own existing boundary (nav is identical for tablet and
+     desktop, so it never needed a third tier); 1024px is the new
+     boundary this file introduces to split "desktop row" from
+     "tablet/mobile stacked" comfortably between the 834px and 1440px
+     reference frames. */
 
 .hero {
   position: fixed;
@@ -149,12 +176,13 @@
      vertical reveal offset — a single element can only have one
      `transform`, so this can't be split across the two classes. */
   transform: translate(-50%, 10px);
-  /* 48px at the 1440px reference (3.333vw); pinned to the literal
-     48/20/8/16/20px spec for the >=768px desktop range below, same as
-     components/nav/nav.css does for its own buttons. */
-  height: clamp(40px, 3.333vw, 48px);
-  gap: clamp(4px, 0.556vw, 8px); /* 8 / 1440, same ratio as the nav buttons */
-  padding-inline: clamp(14px, 1.389vw, 20px); /* 20 / 1440 */
+  /* 48px height / 20px padding / 8px gap — identical across all three
+     Figma frames (desktop 114:238, tablet 130:2178, and the mobile
+     402px-reference frame family), so this is a flat value rather
+     than a fluid clamp(): there's no width at which it should scale. */
+  height: 48px;
+  gap: 8px;
+  padding-inline: 20px;
 }
 
 .hero__cta.is-visible {
@@ -165,7 +193,7 @@
   font-family: 'DM Sans', sans-serif;
   font-weight: 500;
   font-optical-sizing: auto;
-  font-size: clamp(12px, 1.111vw, 16px); /* 16 / 1440, same ratio as the nav buttons */
+  font-size: 16px; /* flat — see .hero__cta's own comment on why this doesn't scale */
   line-height: 1.1;
   letter-spacing: -0.02em; /* same -2% ratio as the nav buttons' labels */
   white-space: nowrap;
@@ -174,46 +202,74 @@
 .hero__cta-icon {
   display: block;
   flex-shrink: 0;
-  width: clamp(14px, 1.389vw, 20px); /* 20 / 1440, same ratio as the nav buttons' icons */
-  height: clamp(14px, 1.389vw, 20px);
+  width: 20px;
+  height: 20px;
 }
 
-/* ---- Responsive: >=768px (matching components/nav/nav.css's own
-   breakpoint) pins the CTA to its literal desktop spec, the same way
-   nav.css pins its own buttons — the clamp() above already resolves
-   to these exact numbers at the 1440px reference, but was otherwise
-   still scaling down below that, undershooting the spec at common
-   in-between desktop widths (e.g. 1280-1728px laptop screens). ---- */
-@media (min-width: 768px) {
-  .hero__cta {
-    height: 48px;
-    gap: 8px;
-    padding-inline: 20px;
-  }
-
-  .hero__cta-label {
-    font-size: 16px;
-  }
-
-  .hero__cta-icon {
-    width: 20px;
-    height: 20px;
-  }
-}
-
-/* ---- Responsive: below 768px (matching components/nav/nav.css's own
-   breakpoint), stack fixed-text / cake / variable-text / button in a
-   single centered column instead of a row. This is a functional-only
-   fallback to satisfy "no overflow from 320-1920", not a designed
-   mobile hero — a dedicated small-screen layout is a separate task. */
-@media (max-width: 767px) {
+/* ---- Responsive: below 1024px (Figma tablet frame 130:2178, 834px
+   reference, and the mobile 402px-reference frame family — see the
+   header comment) stacks fixed-text / cake / variable-text into a
+   single centered column instead of a row. Both the tablet and mobile
+   frames share this exact structure; only their sizing differs (the
+   two narrower bands below). Desktop (>=1024px) is untouched — the
+   base rules above still apply there exactly as before. ---- */
+@media (max-width: 1023px) {
   .hero__cluster {
     flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 8px;
   }
 
   .hero__text--fixed,
   .hero__text--variable {
     text-align: center;
+  }
+}
+
+/* ---- Tablet band (768-1023px, Figma node 130:2178): keeps desktop's
+   exact 72px type and 420px cake — only the layout above changes, not
+   the sizing — so both are pinned to their literal values here rather
+   than left to the row-mode fluid clamp()s, which only reach these
+   numbers at the 1440px desktop reference and would otherwise
+   undershoot them throughout this band. 768px reuses nav.css's own
+   existing breakpoint (its Nav is identical for tablet and desktop, so
+   it never needed a third tier); this file introduces 1024px as the
+   new boundary between "desktop row" and "tablet/mobile stacked". ---- */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .hero__text {
+    font-size: 72px;
+  }
+
+  .hero__cake {
+    width: 420px;
+    height: 420px;
+  }
+}
+
+/* ---- Mobile band (below 768px, matching nav.css's own breakpoint —
+   its Nav-Mobile takes over at the same width): the mobile frame
+   family uses smaller 56px type (down from 72px) and sizes the cake
+   to the content column's own width (362px at the 402px reference)
+   rather than a fixed square, so both get their own fluid formulas
+   reaching those exact numbers at 402px and tapering further for
+   narrower phones, instead of inheriting the row-mode clamp()s (which
+   are calibrated to reach their max at the 1440px desktop reference,
+   not 402px). Also tightens the page's own side padding to the
+   frame's 20px margin, for the same reason. ---- */
+@media (max-width: 767px) {
+  .hero {
+    padding-inline: clamp(16px, 4.975vw, 20px); /* 20 / 402 */
+  }
+
+  .hero__text {
+    font-size: clamp(32px, 13.93vw, 56px); /* 56 / 402 */
+  }
+
+  .hero__cake {
+    width: 100%;
+    max-width: 362px; /* the frame's own content-column width at 402px */
+    height: auto;
+    aspect-ratio: 1;
   }
 }
 
