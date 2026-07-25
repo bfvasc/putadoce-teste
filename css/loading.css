@@ -300,6 +300,63 @@ body {
   }
 }
 
+/* ---- Horizontal scroll for the settled row below 368px ----
+   4 thumbnails at the required fixed 80px size + 16px gap add up to
+   368px (4*80 + 3*16), wider than any viewport narrower than that --
+   with the row's usual position:fixed + centered transform, the
+   overflow is simply clipped and unreachable, since fixed elements
+   never respond to scrolling of any kind. There's no way to make a
+   position:fixed element natively scrollable, so below 368px the
+   settled row switches its OWN items from fixed+transform to a plain
+   scrollable flex row instead.
+
+   This only ever applies once .is-selected is present -- i.e. only
+   once loading.js's own transitionend-based trigger confirms the
+   settle animation has ACTUALLY finished (see loading.js and the
+   .is-selected rules above) -- so the fixed-position settle animation
+   itself is completely untouched and still plays identically at every
+   width; this just swaps the mechanism for the already-at-rest state
+   right after, which is why .loading-item's own transition is turned
+   off here: nothing here should visibly animate, it's a same-frame
+   swap from one static layout to a visually equivalent one. */
+@media (max-width: 367px) {
+  #loadingTrack.is-selected {
+    position: fixed;
+    /* Each .loading-item used to carry its own z-index (1, or 2 for
+       item 1) directly against .loading-circle's z-index:0, in the
+       same top-level stacking context -- always painting on top
+       regardless of DOM order. Now that they're nested inside this
+       newly-positioned wrapper instead, that comparison happens one
+       level up: the wrapper itself needs an explicit z-index so the
+       circle (a later sibling, and otherwise tied at the effective
+       z-index:0 auto/0 default) doesn't paint over it. */
+    z-index: 1;
+    left: 0;
+    right: 0;
+    bottom: var(--final-bottom-margin);
+    top: auto;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: var(--thumb-gap);
+    padding-inline: 20px; /* matches the hero's own mobile page margin (css/hero.css) */
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+  }
+
+  #loadingTrack.is-selected .loading-item {
+    position: relative;
+    top: auto;
+    left: auto;
+    transform: none;
+    transition: none;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+  }
+}
+
 /* Users who've asked for less motion get the finished state straight
    away — loading.js also checks this directly and skips its timers
    entirely, but the CSS override is a belt-and-suspenders fallback
