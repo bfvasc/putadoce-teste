@@ -101,10 +101,18 @@
      (120px/80px thumbnails, 20px gap) and scales down proportionally
      on narrower viewports, floored so nothing gets illegibly small.
      Border/shadow on the selected state stay fixed-size (see below)
-     since only "thumbnail size and spacing" was asked to scale. ----*/
+     since only "thumbnail size and spacing" was asked to scale.
+
+     --thumb-size-final and --thumb-gap are the exception: the resting
+     (post-entrance) thumbnail row is required to stay full-size at
+     every breakpoint, including tablet/mobile — the Figma tablet
+     (130:2178) and mobile (402px-reference) frames both show the same
+     80px thumbnails as desktop, just with a tighter 16px gap at
+     mobile instead of 20px (see the media query below). So these two
+     are flat values, not clamp()s. ----*/
   --thumb-size-row: clamp(48px, 8.333vw, 120px); /* 120 / 1440 */
-  --thumb-size-final: clamp(32px, 5.556vw, 80px); /* 80 / 1440 */
-  --thumb-gap: clamp(8px, 1.389vw, 20px); /* 20 / 1440 */
+  --thumb-size-final: 80px;
+  --thumb-gap: 20px; /* 16px below 768px — see the media query near the bottom of this file */
   --thumb-radius: 12px;
   --final-bottom-margin: clamp(16px, 2.778vw, 40px); /* 40 / 1440 */
 
@@ -280,6 +288,16 @@ body {
 
 #loadingTrack.is-selected ~ .loading-circle {
   transform: translate(-50%, -50%) translate(var(--item1-final-dx), var(--items-final-dy)) scale(1);
+}
+
+/* Tighter thumbnail gap on mobile (Figma's 402px-reference frame) —
+   thumbnail SIZE stays 80px everywhere (see --thumb-size-final
+   above); only this spacing changes below the same breakpoint
+   nav.css/hero.css already use for their own mobile tier. */
+@media (max-width: 767px) {
+  :root {
+    --thumb-gap: 16px;
+  }
 }
 
 /* Users who've asked for less motion get the finished state straight
