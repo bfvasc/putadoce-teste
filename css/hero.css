@@ -53,6 +53,14 @@
   position: fixed;
   inset: 0;
   z-index: 1; /* above .loading-screen (auto/0), below .nav (10) */
+  /* This spans the entire viewport (inset:0) but only actually draws
+     content in the middle -- without this, its own empty space sits
+     at the same z-index tier as (and, being later in the DOM, paints
+     over) the now-clickable thumbnails in that same tier below,
+     silently swallowing clicks meant for them even though nothing of
+     .hero is visibly there. .hero__cta (the only real interactive
+     child) opts back in explicitly. */
+  pointer-events: none;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -176,6 +184,7 @@
   position: absolute;
   left: 50%;
   bottom: calc(var(--final-bottom-margin) + var(--thumb-size-final) + 24px);
+  pointer-events: auto; /* opts back in to clicks -- .hero itself is pointer-events:none, see there */
   /* Combines horizontal centering with .hero__reveal's own initial
      vertical reveal offset — a single element can only have one
      `transform`, so this can't be split across the two classes. */

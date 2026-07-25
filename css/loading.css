@@ -154,6 +154,17 @@ body {
 }
 
 .loading-item {
+  /* A real <button> now (js/cake-switcher.js makes each thumbnail
+     clickable/keyboard-operable) -- these five properties reset the
+     browser's own button chrome (background, border-alternative
+     padding, inherited font) that would otherwise show through or
+     conflict with the sizing/border this rule already owns below. */
+  appearance: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+
   position: fixed;
   top: 50%;
   left: 50%;
@@ -178,6 +189,11 @@ body {
     transform var(--loading-settle-duration) var(--loading-easing),
     border-color var(--loading-select-duration) ease,
     box-shadow var(--loading-select-duration) ease;
+}
+
+.loading-item:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
 }
 
 /* image-cake-1 stays on top of the pile during stage 1's stack, since
@@ -243,11 +259,16 @@ body {
   --dx: calc((var(--thumb-size-final) + var(--thumb-gap)) * 1.5);
 }
 
-/* ---- Selected state (node 150:3493, image-cake-1 only) ----
+/* ---- Selected state (node 150:3493) ----
    4px solid white border + a soft drop shadow, starting once stage 3's
    settle transition has actually finished (not while it's still
-   moving) — only ever applied to the first thumbnail. */
-.loading-track.is-selected .loading-item[data-item='1'] {
+   moving). .is-active marks whichever thumbnail's cake the hero is
+   currently showing -- js/cake-switcher.js moves it to the clicked
+   thumbnail on every switch, defaulting to item 1 (matching the hero's
+   own default content) on page load. Was hardcoded to
+   [data-item='1'] before that script existed; now generalized so the
+   selected state can move. */
+.loading-track.is-selected .loading-item.is-active {
   border-color: #ffffff;
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
 }
