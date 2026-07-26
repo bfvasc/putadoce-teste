@@ -413,6 +413,20 @@
     padding-bottom: var(--hero-cta-clearance);
   }
 
+  .hero__cta {
+    /* Mobile-only: the button sits 16px above the thumbnail row here
+       (down from the base rule's flat 24px, which still applies
+       untouched at >=768px) -- only this literal position moves.
+       --hero-cta-clearance above (the reserved centering/max-height
+       zone the cluster and cake size themselves against) deliberately
+       stays as-is: it already reserves more room than the button's
+       real height + gap needs, so tightening the button's own gap
+       here can't newly expose it to overlap, and leaving that
+       reservation untouched is what keeps the cake's size and the
+       cluster's centering pixel-identical to before this change. */
+    bottom: calc(var(--final-bottom-margin) + var(--thumb-size-final) + 16px);
+  }
+
   .hero__text {
     font-size: clamp(32px, 13.93vw, 56px); /* 56 / 402 */
   }

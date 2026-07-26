@@ -393,7 +393,7 @@ body {
    hardcoded a second time. */
 @media (max-width: 767px) {
   :root {
-    --thumb-gap: 16px;
+    --thumb-gap: 12px;
     --final-bottom-margin: 24px;
   }
 }
