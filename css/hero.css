@@ -343,6 +343,26 @@
    not 402px). Also tightens the page's own side padding to the
    frame's 20px margin, for the same reason. ---- */
 @media (max-width: 767px) {
+  .hero__cluster {
+    /* Pins the cluster to a definite width (the frame's own
+       402px-reference content column, same 362px the cake's own width
+       formula below targets) instead of leaving it shrink-to-fit
+       (its width:auto elsewhere). Shrink-to-fit sizes the cluster to
+       its widest child, which is normally the cake -- but the cake's
+       own width is *also* a percentage of this same cluster, so on a
+       short viewport (where the cake's max-height cap below can pull
+       its height-driven size under a long flavor word's natural
+       shrink-to-fit width, e.g. "bala de goma" vs. "buttercream")
+       that widest-child role can flip to the text instead, growing
+       the cluster -- and with it the cake, via that same percentage
+       -- just because a different, wider word happens to be showing.
+       A definite width here breaks that feedback loop entirely: the
+       cake's own width can never again depend on which word is
+       currently selected, keeping all four the same size as required. */
+    width: 100%;
+    max-width: 362px;
+  }
+
   .hero {
     padding-inline: clamp(16px, 4.975vw, 20px); /* 20 / 402 */
 
@@ -356,23 +376,40 @@
        whatever those two values are IS where it centers -- not an
        approximation of it. */
 
+    /* Overrides the base rule's fluid --hero-nav-clearance, which is
+       only calibrated to match nav.css's own fluid desktop/tablet
+       formula (padding: clamp(12px,1.389vw,20px), content height:
+       clamp(32px,2.778vw,40px)) -- nav.css pins both to flat values
+       below 768px (padding: 20px, logo/button height: 40px, its own
+       <768px band), so the base formula undercounts the real mobile
+       header by 24px (56px assumed vs. 80px actual) at every mobile
+       width. Matching nav's real mobile height here is what makes the
+       +24px buffer below an actual guaranteed minimum gap instead of
+       silently absorbed by that 24px shortfall. */
+    --hero-nav-clearance: calc(2 * 20px + 40px);
+
     /* >=24px of breathing room between the nav and "nós amamos",
-       on top of nav's own real height (--hero-nav-clearance, set on
-       the base rule above) -- previously the content box started
-       flush against the nav with no buffer of its own, so the actual
-       gap depended entirely on how much leftover space centering
-       happened to put above the cluster. */
+       on top of nav's own real height (--hero-nav-clearance, just
+       above) -- previously the content box started flush against the
+       nav with no buffer of its own, so the actual gap depended
+       entirely on how much leftover space centering happened to put
+       above the cluster. */
     --hero-top-clearance: calc(var(--hero-nav-clearance) + 24px);
     padding-top: var(--hero-top-clearance);
 
     /* Redefines the shared <1024px tier's own --hero-cta-clearance
        without its +20px fudge: 24px clear of the viewport bottom
        (--final-bottom-margin, now 24px on mobile -- see css/loading.css),
-       the 80px thumbnail row, a 24px gap, then the 48px button. The
-       cake's own max-height cap below is what actually guarantees no
-       button overlap now, so an extra buffer here would just eat into
-       the centered space for no reason. */
-    --hero-cta-clearance: calc(var(--final-bottom-margin) + var(--thumb-size-final) + 24px + 48px);
+       the 80px thumbnail row, a 24px gap, then the 48px button, then a
+       further +24px buffer so "buttercream" keeps a guaranteed
+       comfortable gap above the button too -- without it, this
+       boundary lands exactly on the button's own top edge (both being
+       built from the same figures), leaving nothing but leftover
+       centering slack between them, which can shrink to near-zero on
+       short viewports. The cake's own max-height cap below is what
+       actually guarantees no button overlap; this buffer is purely
+       about keeping the text comfortably clear of it. */
+    --hero-cta-clearance: calc(var(--final-bottom-margin) + var(--thumb-size-final) + 24px + 48px + 24px);
     padding-bottom: var(--hero-cta-clearance);
   }
 
@@ -381,21 +418,82 @@
   }
 
   .hero__cake {
-    width: 100%;
-    max-width: 362px; /* the frame's own content-column width at 402px */
+    /* The frame's own 402px-reference content column (362px, matching
+       .hero__cluster's own width above) as one width candidate, and
+       the short-viewport safety net (see below) as a second -- folded
+       directly into width itself, rather than width capped one way
+       and height capped another (max-height alone) via aspect-ratio,
+       so both dimensions always shrink by the exact same amount and
+       the box stays square at every viewport. height:auto plus
+       aspect-ratio:1 then simply mirrors whichever width wins here.
+       Hoisted into a custom property (rather than repeating this
+       min() directly in `width` below) so the per-cake overlap
+       margins further down can share the exact same resolved value --
+       they need to shrink in lockstep with the cake's real width, not
+       just the two width-only candidates, or the overlap would
+       overshoot on short viewports where the third candidate wins. */
+    --hero-cake-size: min(
+      100%,
+      362px,
+      /* Short-viewport safety net, using this band's own top/bottom
+         clearances (above) and fluid text-size formula (font-size *
+         1.1 line-height, for both stacked text lines) -- a no-op at
+         any normal phone height, where the other two candidates above
+         already resolve smaller than this one. */
+      calc(100vh - var(--hero-top-clearance) - var(--hero-cta-clearance) - 2.2 * clamp(32px, 13.93vw, 56px))
+    );
+    width: var(--hero-cake-size);
     height: auto;
     aspect-ratio: 1;
-    /* Pulls the cake into the two texts either side of it (.hero__cluster's
-       own gap is already 0, from the shared <1024px tier) so they
-       overlap slightly instead of just touching -- explicitly fine per
-       this task, unlike the button, which must never be touched. */
-    margin-block: -20px;
-    /* Short-viewport safety net, using this band's own top/bottom
-       clearances (above) and fluid text-size formula (font-size * 1.1
-       line-height, for both stacked text lines) -- a no-op at any
-       normal phone height, where the width-driven size above already
-       fits comfortably. */
-    max-height: calc(100vh - var(--hero-top-clearance) - var(--hero-cta-clearance) - 2.2 * clamp(32px, 13.93vw, 56px));
+    /* Flex items paint in z-index order among their own siblings even
+       without an explicit position -- this alone is enough to put the
+       cake above both texts (each left at the implicit z-index:auto)
+       so the per-cake overlap below tucks the text behind the visible
+       cake instead of the cake's transparent padding sitting on top
+       of it. */
+    z-index: 1;
+  }
+
+  /* ---- Per-cake text/cake overlap (mobile only) ----
+     Each central PNG is a fixed 840x840 canvas, but the actual visible
+     cake inside sits at a different offset on every side per cake
+     (cake 4's flowers reach almost to the top edge; cake 2 sits well
+     clear of every edge) -- a single shared margin (the old flat -20px
+     both sides) could only ever match one of the four, either leaving
+     a visible gap on some or biting into the artwork on others. Each
+     margin below is that cake's own measured empty-padding ratio
+     (transparent space above/below the visible cake, as a fraction of
+     the 840px canvas) plus a small fixed ~3.5% tuck: the padding ratio
+     alone would only close the gap flush with the visible cake's edge,
+     so the tuck is what creates the actual "slides slightly behind the
+     cake" overlap the cake's z-index above then covers. Keyed off
+     data-cake (already set by js/cake-switcher.js on every switch) so
+     the shared markup/template needs no per-cake duplication.
+     var(--hero-cake-size) is the exact same three-candidate min() the
+     cake's own width above resolves to, not just a plain percentage
+     of the container -- reusing it here (rather than repeating just
+     the "100%, 362px" part) is what keeps each margin proportionally
+     correct even once the short-viewport safety net's third candidate
+     shrinks the cake below its own width-only cap. */
+  .hero__cake[data-cake='1'] {
+    /* content box (125,81)-(700,725) of 840x840: 9.64% empty top, 13.69% empty bottom */
+    margin-top: calc(-1 * var(--hero-cake-size) * 0.1314);
+    margin-bottom: calc(-1 * var(--hero-cake-size) * 0.1719);
+  }
+  .hero__cake[data-cake='2'] {
+    /* content box (76,99)-(696,736) of 840x840: 11.79% empty top, 12.38% empty bottom */
+    margin-top: calc(-1 * var(--hero-cake-size) * 0.1529);
+    margin-bottom: calc(-1 * var(--hero-cake-size) * 0.1588);
+  }
+  .hero__cake[data-cake='3'] {
+    /* content box (107,73)-(717,777) of 840x840: 8.69% empty top, 7.5% empty bottom */
+    margin-top: calc(-1 * var(--hero-cake-size) * 0.1219);
+    margin-bottom: calc(-1 * var(--hero-cake-size) * 0.1100);
+  }
+  .hero__cake[data-cake='4'] {
+    /* content box (60,12)-(781,776) of 840x840: 1.43% empty top, 7.62% empty bottom */
+    margin-top: calc(-1 * var(--hero-cake-size) * 0.0493);
+    margin-bottom: calc(-1 * var(--hero-cake-size) * 0.1112);
   }
 }
 
