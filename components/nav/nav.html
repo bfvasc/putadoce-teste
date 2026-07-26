@@ -1,5 +1,12 @@
 <header class="nav" id="siteNav">
-  <button type="button" class="nav__button nav__button--cake btn-outline">
+  <button
+    type="button"
+    class="nav__button nav__button--cake btn-outline"
+    id="cakesMenuTrigger"
+    aria-haspopup="dialog"
+    aria-expanded="false"
+    aria-controls="cakesMenuPanel"
+  >
     <span class="nav__button-label">Bolos</span>
     <img class="nav__button-icon" src="assets/icons/icon-cake.svg" alt="" />
   </button>
@@ -11,3 +18,50 @@
     <img class="nav__button-icon" src="assets/icons/icon-menu.svg" alt="" />
   </button>
 </header>
+
+<div class="cakes-menu" id="cakesMenu" aria-hidden="true">
+  <div class="cakes-menu__overlay" id="cakesMenuOverlay"></div>
+
+  <div
+    class="cakes-menu__panel"
+    id="cakesMenuPanel"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Menu de bolos"
+  >
+    <div class="cakes-menu__inner">
+      <button type="button" class="cakes-menu__close" id="cakesMenuClose" aria-label="Fechar menu de bolos">
+        <img class="cakes-menu__close-icon" src="assets/icons/icon-minus.svg" alt="" />
+      </button>
+
+      <ul class="cakes-menu__list">
+        <li class="cakes-menu__item">
+          <button type="button" class="cakes-menu__link">
+            <span class="cakes-menu__title">Clássico</span>
+            <img class="cakes-menu__thumb" src="assets/images/shared/image-cake-menu-classico-1.png" alt="" />
+          </button>
+        </li>
+        <li class="cakes-menu__item">
+          <button type="button" class="cakes-menu__link">
+            <span class="cakes-menu__title">Goma</span>
+            <img class="cakes-menu__thumb" src="assets/images/shared/image-cake-menu-goma-1.png" alt="" />
+          </button>
+        </li>
+        <li class="cakes-menu__item">
+          <button type="button" class="cakes-menu__link">
+            <span class="cakes-menu__title">Floral</span>
+            <img class="cakes-menu__thumb" src="assets/images/shared/image-cake-menu-floral-1.png" alt="" />
+          </button>
+        </li>
+        <li class="cakes-menu__item">
+          <button type="button" class="cakes-menu__link">
+            <span class="cakes-menu__title">Ouriço</span>
+            <img class="cakes-menu__thumb" src="assets/images/shared/image-cake-menu-ourico-1.png" alt="" />
+          </button>
+        </li>
+      </ul>
+
+      <button type="button" class="cakes-menu__order">Peça no Goomer</button>
+    </div>
+  </div>
+</div>
