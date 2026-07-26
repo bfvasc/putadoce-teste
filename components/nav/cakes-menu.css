@@ -1,0 +1,261 @@
+/* "Bolos" cakes menu — matches the panel in Figma node 115:539 (file
+   kAYJnyqg4kZczqNmndvmeE): a white card pinned to the top-left of the
+   viewport, listing four cake flavors (Clássico, Goma, Floral,
+   Ouriço) each with a thumbnail, plus a "Peça no Goomer" link, with a
+   dark scrim behind it dimming the rest of the page. Opens when
+   .nav__button--cake ("Bolos", components/nav/nav.html) is clicked;
+   markup lives alongside the header in nav.html (both are injected by
+   nav.js) and this file only styles the menu itself, exactly the same
+   "reusable component, own stylesheet" split nav.css/nav.html already
+   use — so any future page that loads nav.html/nav.js/nav.css and
+   this file gets the same menu for free.
+
+   No links are wired up yet -- the four cake items and the order link
+   are intentionally inert (see cakes-menu.js): they exist to look and
+   behave like real controls (cursor, hover, keyboard focus) ahead of
+   getting real hrefs later.
+
+   ---- Animation ----
+   A menu opening from a click is a discrete, deliberate action, not a
+   gesture that carries its own momentum -- per the apple-design
+   skill, that means no overshoot/bounce (bounce is only earned by
+   motion that already has momentum to carry). The panel slides in
+   from the left and fades in together with the scrim; closing
+   reverses the exact same path (apple-design: "if something
+   disappears one way, we expect it to emerge from where it came"),
+   which is also naturally where it's anchored -- pinned to the same
+   top-left corner the "Bolos" trigger itself lives in. --cakes-menu-*
+   custom properties are defined locally (not reusing css/loading.css's
+   --loading-easing) so this component has no hard dependency on that
+   stylesheet and can be dropped into any page on its own. */
+
+:root {
+  --cakes-menu-duration: 300ms;
+  /* Same critically-damped-feeling settle curve as the rest of the
+     site (css/loading.css's --loading-easing) -- redefined here,
+     rather than imported, to keep this component self-contained. */
+  --cakes-menu-easing: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* Purely a visibility gate for the whole menu (scrim + panel): while
+   closed, visibility:hidden removes the entire subtree from hit
+   testing, the tab order, and the accessibility tree all at once --
+   no separate pointer-events bookkeeping needed. The transition delay
+   is what keeps it visible for the full close animation and hides it
+   the instant the equivalent open transition would have no delay at
+   all, so opening is immediate but closing waits for the fade/slide
+   below to actually finish. */
+.cakes-menu {
+  visibility: hidden;
+  transition: visibility 0s linear var(--cakes-menu-duration);
+}
+
+.cakes-menu.is-open {
+  visibility: visible;
+  transition: visibility 0s linear;
+}
+
+.cakes-menu__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20; /* above .nav (10) and .hero (1) -- dims both */
+  background-color: rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  transition: opacity var(--cakes-menu-duration) var(--cakes-menu-easing);
+}
+
+.cakes-menu.is-open .cakes-menu__overlay {
+  opacity: 1;
+}
+
+.cakes-menu__panel {
+  position: fixed;
+  z-index: 21; /* above .cakes-menu__overlay */
+  top: clamp(12px, 1.389vw, 20px); /* matches .nav's own edge padding (components/nav/nav.css) */
+  left: clamp(12px, 1.389vw, 20px);
+  width: clamp(300px, 39.722vw, 572px); /* 572 / 1440 */
+  max-height: calc(100vh - 2 * clamp(12px, 1.389vw, 20px));
+  box-sizing: border-box;
+  background-color: #ffffff;
+  border-radius: 16px;
+  overflow: hidden; /* clips .cakes-menu__inner's own scroll to the rounded corners */
+  transform: translateX(-24px);
+  opacity: 0;
+  transition:
+    transform var(--cakes-menu-duration) var(--cakes-menu-easing),
+    opacity var(--cakes-menu-duration) var(--cakes-menu-easing);
+}
+
+.cakes-menu.is-open .cakes-menu__panel {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.cakes-menu__inner {
+  max-height: inherit;
+  overflow-y: auto; /* safety net -- content fits comfortably at every tested size, this only ever engages on unusually short viewports */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.cakes-menu__close {
+  appearance: none;
+  display: block;
+  background: none;
+  border: none;
+  /* 8px of hit-padding around the 24px glyph -- a comfortable tap
+     target without changing the icon's own visual size (apple-design:
+     add hysteresis/hit padding around small targets). Negative margin
+     cancels the padding back out of layout so it doesn't push the
+     list below any further down than the glyph's own 24px would. */
+  padding: 8px;
+  margin: -8px -8px 24px -8px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.18s ease;
+}
+
+.cakes-menu__close:hover {
+  background-color: #fee7f6;
+}
+
+.cakes-menu__close:focus-visible {
+  outline: 2px solid #ff2b00;
+  outline-offset: 2px;
+}
+
+.cakes-menu__close-icon {
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+
+.cakes-menu__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cakes-menu__item {
+  border-bottom: 1.5px solid #ff2b00;
+}
+
+.cakes-menu__link {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  background: none;
+  border: none;
+  padding-block: 24px;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.cakes-menu__link:focus-visible {
+  outline: 2px solid #ff2b00;
+  outline-offset: -2px;
+}
+
+.cakes-menu__title {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  font-optical-sizing: auto;
+  font-size: clamp(28px, 3.333vw, 48px); /* 48 / 1440 */
+  line-height: 1.1;
+  letter-spacing: -0.04em; /* Figma's -1.92px at 48px is a -4% ratio, same convention as css/hero.css's .hero__text */
+  color: #ff2b00;
+  transition: color 0.18s ease;
+}
+
+/* The only hover effect anywhere in this menu's four items -- nothing
+   else (background, thumbnail, layout) changes on hover, by design. */
+.cakes-menu__link:hover .cakes-menu__title {
+  color: #5f1030;
+}
+
+.cakes-menu__thumb {
+  display: block;
+  flex-shrink: 0;
+  height: clamp(64px, 6.6vw, 95px); /* 95 / 1440 */
+  width: auto;
+  max-width: clamp(60px, 8.4vw, 121px); /* keeps each image's own aspect ratio (they're not all the same shape) inside a comfortable box */
+  object-fit: contain;
+}
+
+.cakes-menu__order {
+  appearance: none;
+  display: block;
+  background: none;
+  border: none;
+  padding-block: 24px;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  font-optical-sizing: auto;
+  font-size: 16px;
+  line-height: 1.1;
+  letter-spacing: -0.04em; /* Figma's -0.64px at 16px is the same -4% ratio as the titles above */
+  color: #ff2b00;
+  text-decoration: underline;
+  transition: color 0.18s ease;
+}
+
+.cakes-menu__order:hover {
+  color: #5f1030;
+}
+
+.cakes-menu__order:focus-visible {
+  outline: 2px solid #ff2b00;
+  outline-offset: 2px;
+}
+
+/* ---- Mobile (<768px, matching nav.css's own breakpoint): the 572px
+   desktop card has no room to sit at a fixed width on a 320-414px
+   phone, so it becomes a near-full-width panel instead -- same
+   top-left anchor and the same left-slide-in/out, just resized so
+   nothing overflows the viewport. Type and thumbnails shrink to match. ---- */
+@media (max-width: 767px) {
+  .cakes-menu__panel {
+    top: 12px;
+    left: 12px;
+    width: calc(100% - 24px);
+    max-height: calc(100vh - 24px);
+  }
+
+  .cakes-menu__inner {
+    padding: 16px;
+  }
+
+  .cakes-menu__title {
+    font-size: clamp(22px, 7.5vw, 32px);
+  }
+
+  .cakes-menu__thumb {
+    height: 64px;
+    max-width: 76px;
+  }
+
+  .cakes-menu__link,
+  .cakes-menu__order {
+    padding-block: 16px;
+  }
+
+  .cakes-menu__close {
+    margin-bottom: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cakes-menu,
+  .cakes-menu.is-open,
+  .cakes-menu__overlay,
+  .cakes-menu__panel {
+    transition: none;
+  }
+}

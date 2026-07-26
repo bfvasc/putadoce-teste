@@ -30,18 +30,32 @@
       return response.text();
     })
     .then(function (html) {
-      var wrapper = document.createElement('div');
-      wrapper.innerHTML = html;
-      var nav = wrapper.firstElementChild;
+      // nav.html now ships more than one top-level element -- the
+      // <header> itself, plus the cakes-menu overlay/panel it opens --
+      // so every top-level element needs to land as its own direct
+      // <body> child, not nested inside the header: the header's own
+      // slide-in `transform` would otherwise become the containing
+      // block for the menu's position:fixed overlay/panel, breaking
+      // their full-viewport sizing. insertAdjacentHTML keeps every
+      // top-level element from the fragment, in order, unlike the
+      // previous wrapper.firstElementChild approach this replaces
+      // (which silently dropped anything after the first element).
+      document.body.insertAdjacentHTML('afterbegin', html);
+
+      var nav = document.querySelector('.nav');
       if (!nav) {
         return;
       }
 
-      document.body.insertBefore(nav, document.body.firstChild);
-
       if (prefersReducedMotion || !hasLoadingSequence) {
         revealNav();
       }
+
+      // Lets components/nav/cakes-menu.js -- loaded as its own script,
+      // with no way to otherwise know when this fetch resolves -- know
+      // nav.html's markup (header + cakes-menu) now actually exists in
+      // the DOM, so it's safe to query and wire up.
+      document.dispatchEvent(new CustomEvent('nav:ready'));
     })
     .catch(function () {
       // The header is non-critical chrome — if the include itself
