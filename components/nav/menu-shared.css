@@ -1,0 +1,51 @@
+/* Shared primitives for every nav-triggered menu panel (the "Bolos"
+   cakes menu, components/nav/cakes-menu.css, and the site nav menu,
+   components/nav/nav-menu.css): the one dark dimming scrim both sit
+   above, and the timing/easing both their open/close animations use.
+   Kept in its own file (rather than duplicated per menu, or folded
+   into nav.css) since it's a genuinely shared dependency of two
+   otherwise-independent stylesheets -- any page loading either menu
+   needs this file loaded too.
+
+   ---- Why one shared overlay, not one per menu ----
+   Only one menu can ever be open at a time (components/nav/menu-shared.js
+   closes whichever menu is open before opening another), so there is
+   only ever one dimming layer to show regardless of which panel is
+   behind it -- a single element is both the simpler implementation
+   and what actually enforces "only one at a time" structurally: there
+   is nothing to keep in sync between two overlays, because there is
+   only one. */
+
+:root {
+  --menu-duration: 300ms;
+  /* Same critically-damped-feeling settle curve as the rest of the
+     site (css/loading.css's --loading-easing) -- redefined here,
+     rather than imported, so these menu components have no hard
+     dependency on that stylesheet and can be dropped into any page
+     on their own. */
+  --menu-easing: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20; /* above .nav (10), below both panels (21) -- dims everything behind whichever one is open */
+  background-color: rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--menu-duration) var(--menu-easing),
+    visibility 0s linear var(--menu-duration);
+}
+
+.menu-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity var(--menu-duration) var(--menu-easing), visibility 0s linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-overlay {
+    transition: none;
+  }
+}

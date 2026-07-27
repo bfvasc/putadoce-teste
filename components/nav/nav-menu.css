@@ -1,0 +1,287 @@
+/* Site nav menu — matches the red panel in Figma node 115:405 (file
+   kAYJnyqg4kZczqNmndvmeE): a full-height panel pinned to the top-right
+   of the viewport (equal top/right/bottom margins), listing the site's
+   pages ("Navegue": Home, Sobre, Portfolio) and contact links
+   ("Contato": Whatsapp, Instagram, Email), plus a white "Pedir no
+   Goomer" button. Opens when .nav__button--menu ("Menu",
+   components/nav/nav.html) is clicked; the shared dimming scrim and
+   this panel's own open/close animation timing live in
+   components/nav/menu-shared.css, and the open/close/focus/Escape
+   mechanics (including "only one menu open at once" with the "Bolos"
+   cakes menu, components/nav/cakes-menu.css) live in
+   components/nav/menu-shared.js.
+
+   No links are wired up yet -- every item and the order button are
+   intentionally inert (see nav-menu.js): they exist to look and
+   behave like real controls (cursor, hover, keyboard focus) ahead of
+   getting real hrefs later. "Home" carries aria-current="page" since
+   it's the current page, matching the Figma design's own visual
+   treatment (identical to the other items -- there's no separate
+   "current page" style to reproduce).
+
+   ---- Animation ----
+   Mirrors the "Bolos" cakes menu's own reasoning (see
+   components/nav/cakes-menu.css): a click has no gesture momentum to
+   earn an overshoot, so this panel just fades and slides in, no
+   bounce. It's anchored to the right (where the "Menu" trigger itself
+   lives) and slides in from the right, the mirror image of the cakes
+   menu's own left-anchored slide -- apple-design: "if something
+   disappears one way, we expect it to emerge from where it came." */
+
+.nav-menu {
+  visibility: hidden;
+  transition: visibility 0s linear var(--menu-duration);
+}
+
+.nav-menu.is-open {
+  visibility: visible;
+  transition: visibility 0s linear;
+}
+
+.nav-menu__panel {
+  position: fixed;
+  z-index: 21; /* above .menu-overlay (components/nav/menu-shared.css) */
+  /* Full screen height, minus an equal breathing margin on the top,
+     right, and bottom (Figma: the panel is inset by the same gap on
+     all three edges) -- pinning both top and bottom directly, rather
+     than computing a height, is what makes that margin equal at any
+     viewport height with no extra math. */
+  top: clamp(12px, 1.389vw, 20px);
+  right: clamp(12px, 1.389vw, 20px);
+  bottom: clamp(12px, 1.389vw, 20px);
+  width: clamp(280px, 23.264vw, 335px); /* 335 / 1440 */
+  box-sizing: border-box;
+  background-color: #ff2b00;
+  border-radius: 16px;
+  overflow: hidden; /* clips .nav-menu__content's own scroll to the rounded corners */
+  transform: translateX(24px);
+  opacity: 0;
+  transition:
+    transform var(--menu-duration) var(--menu-easing),
+    opacity var(--menu-duration) var(--menu-easing);
+}
+
+.nav-menu.is-open .nav-menu__panel {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.nav-menu__close {
+  /* Positioned independently of .nav-menu__content below (which is
+     bottom-aligned) rather than in-flow at its top the way the cakes
+     menu's own close button is -- in-flow here would drag the icon
+     down to sit directly above the groups instead of staying pinned
+     near the panel's own top-right corner, the way Figma shows it. */
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 1;
+  appearance: none;
+  display: block;
+  background: none;
+  border: none;
+  /* 8px of hit-padding around the 24px glyph, canceled back out of
+     layout by the matching negative margin -- same hit-target
+     reasoning as .cakes-menu__close (apple-design: hysteresis/hit
+     padding around small targets). */
+  padding: 8px;
+  margin: -8px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.18s ease;
+}
+
+.nav-menu__close:hover {
+  /* A light white tint rather than .cakes-menu__close's pink
+     (#fee7f6) -- that tint was calibrated for a white surface; this
+     button sits on the panel's own red. */
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.nav-menu__close:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}
+
+.nav-menu__close-icon {
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+
+.nav-menu__content {
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  /* The groups and button cluster at the bottom, leaving the larger
+     empty breathing area at the top (Figma) -- packing everything
+     against the end of the column, rather than reproducing literal
+     absolute Figma coordinates, is what keeps that top space
+     correctly flexible at any panel height instead of only matching
+     one specific viewport. */
+  justify-content: flex-end;
+  overflow-y: auto; /* safety net -- content fits comfortably at every tested size, this only ever engages on unusually short viewports */
+  padding: 24px;
+}
+
+.nav-menu__groups {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.nav-menu__group {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+}
+
+.nav-menu__label {
+  flex-shrink: 0;
+  width: 64px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  font-optical-sizing: auto;
+  font-size: 14px;
+  line-height: 1.1;
+  letter-spacing: -0.04em; /* Figma's -0.56px at 14px is the same -4% ratio used throughout this menu family */
+  color: #ffffff;
+}
+
+.nav-menu__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.nav-menu__list--pages {
+  gap: 0; /* the large type's own line-height already gives it room -- matches Figma, which sets no gap here either */
+}
+
+.nav-menu__list--contact {
+  gap: 4px; /* Figma's own gap for this smaller type, unlike the pages list above */
+}
+
+.nav-menu__link {
+  appearance: none;
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  color: #ffffff;
+  transition: color 0.18s ease;
+}
+
+/* The only hover effect on these items -- nothing else changes, same
+   rule as the cakes menu's own items (components/nav/cakes-menu.css). */
+.nav-menu__link:hover {
+  color: #5f1030;
+}
+
+.nav-menu__link:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}
+
+.nav-menu__list--pages .nav-menu__link {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  font-optical-sizing: auto;
+  font-size: clamp(28px, 3.333vw, 48px); /* 48 / 1440 -- same formula as .cakes-menu__title */
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+}
+
+.nav-menu__list--contact .nav-menu__link {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  font-optical-sizing: auto;
+  font-size: clamp(18px, 1.667vw, 24px); /* 24 / 1440 */
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+}
+
+.nav-menu__order {
+  /* .btn-solid + .btn-solid--inverted (css/buttons.css) supply the
+     shape/skin/hover -- only this component's own size and spacing
+     live here, same split as every other button in the project. */
+  margin-top: 80px; /* the larger gap Figma gives this button above, clearing it from the groups above */
+  width: max-content;
+  height: 48px;
+  gap: 8px;
+  padding-inline: 20px;
+}
+
+.nav-menu__order-label {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  font-optical-sizing: auto;
+  font-size: 16px;
+  line-height: 1.1;
+  letter-spacing: -0.02em; /* same -2% ratio as .hero__cta-label */
+  white-space: nowrap;
+}
+
+.nav-menu__order-icon {
+  display: block;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+/* ---- Mobile (<768px, matching every other breakpoint in this
+   project): the panel becomes near-full-width with small, symmetric
+   margins instead of the fixed 335px column -- same top-anchored,
+   right-slide-in/out, just resized so nothing overflows. Type and
+   the inter-group gaps shrink to match, following the cakes menu's
+   own precedent for compacting a menu on small screens. ---- */
+@media (max-width: 767px) {
+  .nav-menu__panel {
+    top: 12px;
+    right: 12px;
+    bottom: 12px;
+    width: calc(100% - 24px);
+  }
+
+  .nav-menu__close {
+    top: 12px;
+    right: 12px;
+  }
+
+  .nav-menu__content {
+    padding: 16px;
+  }
+
+  .nav-menu__groups {
+    gap: 24px;
+  }
+
+  .nav-menu__order {
+    margin-top: 40px;
+  }
+
+  .nav-menu__list--pages .nav-menu__link {
+    font-size: clamp(24px, 8vw, 32px);
+  }
+
+  .nav-menu__list--contact .nav-menu__link {
+    font-size: clamp(16px, 5vw, 20px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-menu,
+  .nav-menu.is-open,
+  .nav-menu__panel {
+    transition: none;
+  }
+}
