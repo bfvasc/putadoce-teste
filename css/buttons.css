@@ -74,6 +74,20 @@
   transform: translateX(4px);
 }
 
+/* Inverted colorway of .btn-solid -- white fill, red text -- for use
+   on a red surface (the site nav menu's own "Pedir no Goomer" button,
+   components/nav/nav-menu.css) where the default red-on-red would be
+   invisible. Only swaps the two colors; every other rule above
+   (shape, hover, focus) is untouched and applies exactly as-is,
+   including the icon-slide hover -- the icon itself just needs to be
+   a separately-colored red asset (assets/icons/icon-arrow-right-red.svg)
+   since these SVGs are pre-colored rather than currentColor-based
+   (see .btn-outline's own comment on why). */
+.btn-solid--inverted {
+  background-color: #ffffff;
+  color: #ff2b00;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .btn-solid__icon {
     transition: none;

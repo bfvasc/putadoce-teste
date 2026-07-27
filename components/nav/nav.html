@@ -13,15 +13,24 @@
 
   <img class="nav__logo" src="assets/icons/logo.svg" alt="Putadoce" />
 
-  <button type="button" class="nav__button nav__button--menu btn-outline">
+  <button
+    type="button"
+    class="nav__button nav__button--menu btn-outline"
+    id="navMenuTrigger"
+    aria-haspopup="dialog"
+    aria-expanded="false"
+    aria-controls="navMenuPanel"
+  >
     <span class="nav__button-label">Menu</span>
     <img class="nav__button-icon" src="assets/icons/icon-menu.svg" alt="" />
   </button>
 </header>
 
-<div class="cakes-menu" id="cakesMenu" aria-hidden="true">
-  <div class="cakes-menu__overlay" id="cakesMenuOverlay"></div>
+<!-- Shared dimming scrim behind whichever menu panel below is open --
+     see components/nav/menu-shared.css/js for why there's only one. -->
+<div class="menu-overlay" id="menuOverlay" aria-hidden="true"></div>
 
+<div class="cakes-menu" id="cakesMenu" aria-hidden="true">
   <div
     class="cakes-menu__panel"
     id="cakesMenuPanel"
@@ -62,6 +71,47 @@
       </ul>
 
       <button type="button" class="cakes-menu__order">Peça no Goomer</button>
+    </div>
+  </div>
+</div>
+
+<div class="nav-menu" id="navMenu" aria-hidden="true">
+  <div
+    class="nav-menu__panel"
+    id="navMenuPanel"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Menu de navegação"
+  >
+    <button type="button" class="nav-menu__close" id="navMenuClose" aria-label="Fechar menu">
+      <img class="nav-menu__close-icon" src="assets/icons/icon-minus-white.svg" alt="" />
+    </button>
+
+    <div class="nav-menu__content">
+      <div class="nav-menu__groups">
+        <div class="nav-menu__group">
+          <span class="nav-menu__label">Navegue</span>
+          <ul class="nav-menu__list nav-menu__list--pages">
+            <li><button type="button" class="nav-menu__link" aria-current="page">Home</button></li>
+            <li><button type="button" class="nav-menu__link">Sobre</button></li>
+            <li><button type="button" class="nav-menu__link">Portfolio</button></li>
+          </ul>
+        </div>
+
+        <div class="nav-menu__group">
+          <span class="nav-menu__label">Contato</span>
+          <ul class="nav-menu__list nav-menu__list--contact">
+            <li><button type="button" class="nav-menu__link">Whatsapp</button></li>
+            <li><button type="button" class="nav-menu__link">Instagram</button></li>
+            <li><button type="button" class="nav-menu__link">Email</button></li>
+          </ul>
+        </div>
+      </div>
+
+      <button type="button" class="nav-menu__order btn-solid btn-solid--inverted">
+        <span class="nav-menu__order-label">Pedir no Goomer</span>
+        <img class="nav-menu__order-icon btn-solid__icon" src="assets/icons/icon-arrow-right-red.svg" alt="" />
+      </button>
     </div>
   </div>
 </div>

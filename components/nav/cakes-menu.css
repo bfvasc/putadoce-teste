@@ -15,6 +15,13 @@
    behave like real controls (cursor, hover, keyboard focus) ahead of
    getting real hrefs later.
 
+   The dark scrim behind the panel, and the --menu-duration/-easing
+   this panel's own animation uses, live in components/nav/menu-shared.css
+   -- shared with the site nav menu (components/nav/nav-menu.css),
+   since only one of the two menus is ever open at once (see
+   components/nav/menu-shared.js) and so only one dimming layer is
+   ever needed regardless of which panel it's behind.
+
    ---- Animation ----
    A menu opening from a click is a discrete, deliberate action, not a
    gesture that carries its own momentum -- per the apple-design
@@ -24,30 +31,19 @@
    reverses the exact same path (apple-design: "if something
    disappears one way, we expect it to emerge from where it came"),
    which is also naturally where it's anchored -- pinned to the same
-   top-left corner the "Bolos" trigger itself lives in. --cakes-menu-*
-   custom properties are defined locally (not reusing css/loading.css's
-   --loading-easing) so this component has no hard dependency on that
-   stylesheet and can be dropped into any page on its own. */
+   top-left corner the "Bolos" trigger itself lives in. */
 
-:root {
-  --cakes-menu-duration: 300ms;
-  /* Same critically-damped-feeling settle curve as the rest of the
-     site (css/loading.css's --loading-easing) -- redefined here,
-     rather than imported, to keep this component self-contained. */
-  --cakes-menu-easing: cubic-bezier(0.65, 0, 0.35, 1);
-}
-
-/* Purely a visibility gate for the whole menu (scrim + panel): while
-   closed, visibility:hidden removes the entire subtree from hit
-   testing, the tab order, and the accessibility tree all at once --
-   no separate pointer-events bookkeeping needed. The transition delay
-   is what keeps it visible for the full close animation and hides it
-   the instant the equivalent open transition would have no delay at
-   all, so opening is immediate but closing waits for the fade/slide
-   below to actually finish. */
+/* Purely a visibility gate for the panel: while closed,
+   visibility:hidden removes it from hit testing, the tab order, and
+   the accessibility tree all at once -- no separate pointer-events
+   bookkeeping needed. The transition delay is what keeps it visible
+   for the full close animation and hides it the instant the
+   equivalent open transition would have no delay at all, so opening
+   is immediate but closing waits for the fade/slide below to
+   actually finish. */
 .cakes-menu {
   visibility: hidden;
-  transition: visibility 0s linear var(--cakes-menu-duration);
+  transition: visibility 0s linear var(--menu-duration);
 }
 
 .cakes-menu.is-open {
@@ -55,22 +51,9 @@
   transition: visibility 0s linear;
 }
 
-.cakes-menu__overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 20; /* above .nav (10) and .hero (1) -- dims both */
-  background-color: rgba(0, 0, 0, 0.25);
-  opacity: 0;
-  transition: opacity var(--cakes-menu-duration) var(--cakes-menu-easing);
-}
-
-.cakes-menu.is-open .cakes-menu__overlay {
-  opacity: 1;
-}
-
 .cakes-menu__panel {
   position: fixed;
-  z-index: 21; /* above .cakes-menu__overlay */
+  z-index: 21; /* above .menu-overlay (components/nav/menu-shared.css) */
   top: clamp(12px, 1.389vw, 20px); /* matches .nav's own edge padding (components/nav/nav.css) */
   left: clamp(12px, 1.389vw, 20px);
   width: clamp(300px, 39.722vw, 572px); /* 572 / 1440 */
@@ -82,8 +65,8 @@
   transform: translateX(-24px);
   opacity: 0;
   transition:
-    transform var(--cakes-menu-duration) var(--cakes-menu-easing),
-    opacity var(--cakes-menu-duration) var(--cakes-menu-easing);
+    transform var(--menu-duration) var(--menu-easing),
+    opacity var(--menu-duration) var(--menu-easing);
 }
 
 .cakes-menu.is-open .cakes-menu__panel {
@@ -302,7 +285,6 @@
 @media (prefers-reduced-motion: reduce) {
   .cakes-menu,
   .cakes-menu.is-open,
-  .cakes-menu__overlay,
   .cakes-menu__panel {
     transition: none;
   }
