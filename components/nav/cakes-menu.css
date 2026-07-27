@@ -109,7 +109,7 @@
      cancels the padding back out of layout so it doesn't push the
      list below any further down than the glyph's own 24px would. */
   padding: 8px;
-  margin: -8px -8px 24px -8px;
+  margin: -8px -8px 8px -8px;
   cursor: pointer;
   border-radius: 8px;
   transition: background-color 0.18s ease;
@@ -141,15 +141,20 @@
 }
 
 .cakes-menu__link {
+  /* Shared by both the row's own vertical padding and the thumbnail's
+     line-crossing negative margin below, so tightening one keeps the
+     other in sync automatically instead of two numbers that can drift
+     apart. */
+  --cakes-menu-row-padding: 12px;
   appearance: none;
   display: flex;
-  align-items: center;
+  align-items: center; /* still governs the title -- the thumbnail opts out via align-self below */
   justify-content: space-between;
   gap: 16px;
   width: 100%;
   background: none;
   border: none;
-  padding-block: 24px;
+  padding-block: var(--cakes-menu-row-padding);
   font: inherit;
   text-align: left;
   cursor: pointer;
@@ -180,10 +185,21 @@
 .cakes-menu__thumb {
   display: block;
   flex-shrink: 0;
-  height: clamp(64px, 6.6vw, 95px); /* 95 / 1440 */
+  height: clamp(56px, 5.556vw, 80px); /* 80 / 1440 */
   width: auto;
-  max-width: clamp(60px, 8.4vw, 121px); /* keeps each image's own aspect ratio (they're not all the same shape) inside a comfortable box */
+  max-width: clamp(56px, 7vw, 100px); /* keeps each image's own aspect ratio (they're not all the same shape) inside a comfortable box */
   object-fit: contain;
+  /* Sits ON its row's divider line (Figma node 115:539: each thumbnail
+     is bottom-anchored to its row, not centered in the space above the
+     line) rather than floating centered above it -- align-self opts
+     the thumbnail out of .cakes-menu__link's own align-items:center
+     (which still centers the title) so only the image moves. The
+     negative margin cancels the row's own bottom padding (pulling the
+     image down flush with the border) and pulls a further 6px past
+     that, so the image visibly crosses over the line instead of just
+     touching it. */
+  align-self: flex-end;
+  margin-bottom: calc(-1 * var(--cakes-menu-row-padding) - 6px);
 }
 
 .cakes-menu__order {
@@ -191,7 +207,7 @@
   display: block;
   background: none;
   border: none;
-  padding-block: 24px;
+  padding-block: 16px;
   font: inherit;
   text-align: left;
   cursor: pointer;
@@ -236,18 +252,24 @@
     font-size: clamp(22px, 7.5vw, 32px);
   }
 
-  .cakes-menu__thumb {
-    height: 64px;
-    max-width: 76px;
+  .cakes-menu__link {
+    /* Overriding the custom property (rather than padding-block
+       directly) keeps .cakes-menu__thumb's own line-crossing margin
+       -- which reads this same variable -- in sync here too. */
+    --cakes-menu-row-padding: 10px;
   }
 
-  .cakes-menu__link,
+  .cakes-menu__thumb {
+    height: 52px;
+    max-width: 64px;
+  }
+
   .cakes-menu__order {
-    padding-block: 16px;
+    padding-block: 12px;
   }
 
   .cakes-menu__close {
-    margin-bottom: 8px;
+    margin: -8px -8px 6px -8px;
   }
 }
 
