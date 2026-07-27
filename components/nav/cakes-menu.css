@@ -137,7 +137,29 @@
 }
 
 .cakes-menu__item {
-  border-bottom: 1.5px solid #ff2b00;
+  /* The divider is a separate absolutely-positioned layer (below)
+     rather than a plain border, specifically so it can paint IN FRONT
+     of the thumbnail where the two meet -- a border belongs to this
+     element's own box, which its descendants (including the
+     thumbnail, nested two levels down) always paint on top of, so a
+     literal border-bottom here could never sit in front of the image
+     no matter how the image itself were layered. */
+  position: relative;
+}
+
+.cakes-menu__item::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1.5px;
+  background-color: #ff2b00;
+  /* Positioned descendants paint after this item's own non-positioned
+     content (the whole .cakes-menu__link subtree, thumbnail included)
+     regardless of DOM order -- this is what puts the line in front of
+     the image at the bottom edge instead of the image covering it. */
+  z-index: 1;
 }
 
 .cakes-menu__link {
@@ -194,12 +216,12 @@
      line) rather than floating centered above it -- align-self opts
      the thumbnail out of .cakes-menu__link's own align-items:center
      (which still centers the title) so only the image moves. The
-     negative margin cancels the row's own bottom padding (pulling the
-     image down flush with the border) and pulls a further 6px past
-     that, so the image visibly crosses over the line instead of just
-     touching it. */
+     negative margin exactly cancels the row's own bottom padding, so
+     the image's bottom edge lines up flush with .cakes-menu__item's
+     own bottom edge -- precisely where the ::after divider (above)
+     is drawn, and in front of it. */
   align-self: flex-end;
-  margin-bottom: calc(-1 * var(--cakes-menu-row-padding) - 6px);
+  margin-bottom: calc(-1 * var(--cakes-menu-row-padding));
 }
 
 .cakes-menu__order {
@@ -207,6 +229,10 @@
   display: block;
   background: none;
   border: none;
+  /* Extra room above, on top of the row's own symmetric padding
+     below, so the link reads as clearly separate from the last
+     divider line instead of cramped against it. */
+  margin-top: 16px;
   padding-block: 16px;
   font: inherit;
   text-align: left;
